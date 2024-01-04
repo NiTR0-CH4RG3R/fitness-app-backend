@@ -1,17 +1,12 @@
 package com.devgrp.fitnesswebapp.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.devgrp.fitnesswebapp.common.UserType;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-enum UserType{
-    ADMIN,USER;
-}
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -27,14 +22,14 @@ public class User {
     private String email;
     private LocalDate dob;
     private String address;
-    private String telphoneNo;
+    private String telephoneNo;
     private float weight;
     private String bloodGroup;
-    private String healthIsuues;
-    private String emrgencyContact;
+    private String healthIssues;
+    private String emergencyContact;
     private WorkoutPlan followingWorkoutPlan;
-    private boolean goalNotifcation;
-    private boolean workoutPlanNotifcation;
-    private boolean otherNotifcation;
+    private boolean goalNotification;
+    private boolean workoutPlanNotification;
+    private boolean otherNotification;
 
 }
