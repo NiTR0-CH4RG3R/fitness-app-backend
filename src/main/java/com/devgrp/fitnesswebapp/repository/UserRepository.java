@@ -1,8 +1,8 @@
 package com.devgrp.fitnesswebapp.repository;
 
-import com.devgrp.fitnesswebapp.entity.Exercise;
+import com.devgrp.fitnesswebapp.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ExerciseRepository extends JpaRepository<Exercise, Integer> {}
+public interface UserRepository extends JpaRepository<User, Integer> {}
