@@ -1,4 +1,4 @@
-package com.devgrp.fitnesswebapp.common;
+package com.devgrp.fitnesswebapp.entity.types;
 
 public enum GoalType {
     WEIGHT_LOSS,
