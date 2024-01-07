@@ -1,6 +1,6 @@
 package com.devgrp.fitnesswebapp.entity;
 
-import com.devgrp.fitnesswebapp.common.IssueType;
+import com.devgrp.fitnesswebapp.entity.types.IssueType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class Issue {
     @Id
     @GeneratedValue
-    private int id;
+    private Integer id;
 
     @Column( nullable = false )
     private IssueType type = IssueType.OTHER;

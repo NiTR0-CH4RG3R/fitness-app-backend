@@ -1,6 +1,6 @@
 package com.devgrp.fitnesswebapp.entity;
 
-import com.devgrp.fitnesswebapp.common.UserType;
+import com.devgrp.fitnesswebapp.entity.types.UserType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,7 +16,7 @@ import java.util.List;
 public class User {
     @Id
     @GeneratedValue
-    private int id;
+    private Integer id;
 
     @Column( nullable = false )
     private String firstName;

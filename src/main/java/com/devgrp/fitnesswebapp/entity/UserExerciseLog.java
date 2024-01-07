@@ -1,37 +1,10 @@
 package com.devgrp.fitnesswebapp.entity;
 
+import com.devgrp.fitnesswebapp.entity.compositekeys.UserExerciseLogKey;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.Objects;
-
-
-@Embeddable
-@NoArgsConstructor
-@AllArgsConstructor
-@Data
-class UserExerciseLogKey implements Serializable {
-    int userId;
-    int exerciseId;
-    LocalDateTime dateTime;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        UserExerciseLogKey that = (UserExerciseLogKey) o;
-        return Objects.equals(userId, that.userId) && Objects.equals(exerciseId, that.exerciseId) && Objects.equals(dateTime, that.dateTime);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(userId, exerciseId, dateTime);
-    }
-}
 
 @Entity
 @NoArgsConstructor
@@ -52,8 +25,8 @@ public class UserExerciseLog {
     private Exercise exercise;
 
     @Column( nullable = false )
-    private int repCount;
+    private Integer repCount;
 
     @Column( nullable = false )
-    private int setCount;
+    private Integer setCount;
 }

@@ -15,10 +15,10 @@ import java.util.List;
 public class WorkoutPlan {
     @Id
     @GeneratedValue
-    private int id;
+    private Integer id;
 
     @Column( nullable = false )
-    private int duration;//in days
+    private Integer duration;//in days
 
     @Column( nullable = false )
     private LocalDate createdDate = LocalDate.now();

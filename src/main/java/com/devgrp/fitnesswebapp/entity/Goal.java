@@ -1,6 +1,6 @@
 package com.devgrp.fitnesswebapp.entity;
 
-import com.devgrp.fitnesswebapp.common.GoalType;
+import com.devgrp.fitnesswebapp.entity.types.GoalType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,7 +14,7 @@ import java.util.List;
 public class Goal {
     @Id
     @GeneratedValue
-    private int id;
+    private Integer id;
 
     @Column( nullable = false )
     private GoalType type;

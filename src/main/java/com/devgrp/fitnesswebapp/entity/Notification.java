@@ -1,6 +1,6 @@
 package com.devgrp.fitnesswebapp.entity;
 
-import com.devgrp.fitnesswebapp.common.NotificationType;
+import com.devgrp.fitnesswebapp.entity.types.NotificationType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class Notification {
     @Id
     @GeneratedValue
-    private int id;
+    private Integer id;
 
     @Column( nullable = false )
     private NotificationType type = NotificationType.OTHER;
