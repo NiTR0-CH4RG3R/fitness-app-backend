@@ -6,44 +6,54 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
+
 
 @Embeddable
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-class UserLoggingLogKey implements Serializable {
+class UserExerciseLogKey implements Serializable {
     int userId;
-    LocalDateTime loggedInDateTime;
+    int exerciseId;
+    LocalDateTime dateTime;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        UserLoggingLogKey that = (UserLoggingLogKey) o;
-        return Objects.equals(userId, that.userId) && Objects.equals(loggedInDateTime, that.loggedInDateTime);
+        UserExerciseLogKey that = (UserExerciseLogKey) o;
+        return Objects.equals(userId, that.userId) && Objects.equals(exerciseId, that.exerciseId) && Objects.equals(dateTime, that.dateTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, loggedInDateTime);
+        return Objects.hash(userId, exerciseId, dateTime);
     }
 }
 
 @Entity
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Data
-public class UserLoggingLog {
+public class UserExerciseLog {
     @EmbeddedId
-    UserLoggingLogKey id;
+    private UserExerciseLogKey id;
 
     @ManyToOne
     @MapsId("userId")
     @JoinColumn
     private User user;
 
-    private LocalDateTime loggedOutDateTime;
+    @ManyToOne
+    @MapsId("exerciseId")
+    @JoinColumn
+    private Exercise exercise;
+
+    @Column( nullable = false )
+    private int repCount;
+
+    @Column( nullable = false )
+    private int setCount;
 }

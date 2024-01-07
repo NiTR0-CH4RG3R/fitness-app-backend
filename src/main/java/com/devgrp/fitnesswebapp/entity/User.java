@@ -7,29 +7,78 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
+
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Table(name="User")
 public class User {
     @Id
     @GeneratedValue
     private int id;
-    private String firstName;
-    private String lastName;
-    private UserType type;
-    private String email;
-    private LocalDate dob;
-    private String address;
-    private String telephoneNo;
-    private float weight;
-    private String bloodGroup;
-    private String healthIssues;
-    private String emergencyContact;
-    private WorkoutPlan followingWorkoutPlan;
-    private boolean goalNotification;
-    private boolean workoutPlanNotification;
-    private boolean otherNotification;
 
+    @Column( nullable = false )
+    private String firstName;
+
+    @Column( nullable = false )
+    private String lastName;
+
+    @Column( nullable = false )
+    private UserType type = UserType.USER;
+
+    @Column( nullable = false )
+    private String email;
+
+    @Column( nullable = false )
+    private LocalDate dob;
+
+    private String address;
+
+    @Column( nullable = false )
+    private String telephoneNo;
+
+    @Column( nullable = false )
+    private float weight;
+
+    private String bloodGroup;
+
+    private String healthIssues;
+
+    @Column( nullable = false )
+    private String emergencyContact;
+
+    @ManyToOne
+    @JoinColumn
+    private WorkoutPlan followingWorkoutPlan;
+
+    @Column( nullable = false )
+    private boolean goalNotification = true;
+
+    @Column( nullable = false )
+    private boolean workoutPlanNotification = true;
+
+    @Column( nullable = false )
+    private boolean otherNotification = true;
+
+    @OneToMany(mappedBy = "user")
+    private List<ExerciseUserReview> exerciseReviews;
+
+    @OneToMany(mappedBy = "user")
+    private List<WorkoutPlanUserReview> workoutPlanReviews;
+
+    @OneToMany(mappedBy = "followedBy")
+    private List<Goal> goals;
+
+    @OneToMany(mappedBy = "createdBy")
+    private List<Issue> issues;
+
+    @OneToMany(mappedBy = "receiver")
+    private List<Notification> notifications;
+
+    @OneToMany(mappedBy = "user")
+    private List<UserExerciseLog> userExerciseLogs;
+
+    @OneToMany(mappedBy = "user")
+    private List<UserLoggingLog> userLoggingLogs;
 }

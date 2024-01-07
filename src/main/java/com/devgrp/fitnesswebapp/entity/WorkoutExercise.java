@@ -4,44 +4,46 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 
 @Embeddable
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-class ExerciseUserReviewKey implements Serializable {
-    int userId;
+class WorkoutExerciseKey implements Serializable {
+    int workoutPlanId;
     int exerciseId;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ExerciseUserReviewKey that = (ExerciseUserReviewKey) o;
-        return Objects.equals(userId, that.userId) && Objects.equals(exerciseId, that.exerciseId);
+        WorkoutExerciseKey that = (WorkoutExerciseKey) o;
+        return Objects.equals(workoutPlanId, that.workoutPlanId) && Objects.equals(exerciseId, that.exerciseId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, exerciseId);
+        return Objects.hash(workoutPlanId, exerciseId);
     }
+
 }
 
 @Entity
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
-public class ExerciseUserReview {
+public class WorkoutExercise {
     @EmbeddedId
-    private ExerciseUserReviewKey id;
+    private WorkoutExerciseKey id;
 
     @ManyToOne
-    @MapsId("userId")
+    @MapsId("workoutPlanId")
     @JoinColumn
-    private User user;
+    private WorkoutPlan workoutPlan;
 
     @ManyToOne
     @MapsId("exerciseId")
@@ -49,10 +51,12 @@ public class ExerciseUserReview {
     private Exercise exercise;
 
     @Column( nullable = false )
-    private int rating;
-
-    private String comment;
+    private int repCount;
 
     @Column( nullable = false )
-    private LocalDate createdDateTime;
+    private int setCount;
+
+    @ElementCollection
+    @CollectionTable
+    private List<Integer> schedule;
 }

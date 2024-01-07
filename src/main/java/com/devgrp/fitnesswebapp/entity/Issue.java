@@ -1,13 +1,10 @@
 package com.devgrp.fitnesswebapp.entity;
 
 import com.devgrp.fitnesswebapp.common.IssueType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -19,13 +16,21 @@ public class Issue {
     @GeneratedValue
     private int id;
 
-    private IssueType type;
+    @Column( nullable = false )
+    private IssueType type = IssueType.OTHER;
 
-    // TODO : Make foreign keys
-    // NOTE : both goal and workout plan are optional
-    private int goalID;
-    private int workoutPlanID;
-    private int createdBy; // TODO : This is a reference to the User
+    @ManyToOne
+    @JoinColumn
+    private Goal goal;
 
+    @ManyToOne
+    @JoinColumn
+    private WorkoutPlan workoutPlan;
+
+    @ManyToOne
+    @JoinColumn( nullable = false)
+    private User createdBy;
+
+    @Column( nullable = false )
     private LocalDateTime createdDateTime;
 }

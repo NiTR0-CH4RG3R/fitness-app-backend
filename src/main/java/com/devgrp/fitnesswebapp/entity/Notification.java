@@ -1,12 +1,11 @@
 package com.devgrp.fitnesswebapp.entity;
 
 import com.devgrp.fitnesswebapp.common.NotificationType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.jdbc.Work;
 
 import java.time.LocalDateTime;
 
@@ -19,20 +18,26 @@ public class Notification {
     @GeneratedValue
     private int id;
 
-    private NotificationType type;
+    @Column( nullable = false )
+    private NotificationType type = NotificationType.OTHER;
 
+    @Column( nullable = false )
     private String message;
 
+    @Column( nullable = false )
     private LocalDateTime createdDateTime;
 
-    private int receiverID; // TODO : Reference to User
+    @ManyToOne
+    @JoinColumn( nullable = false )
+    private User receiver;
 
     private LocalDateTime receivedDateTime;
 
-    // TODO : Create foreign keys
-    // Also these are optional values.
-    private int goalID;
-    private int workoutPlanID;
+    @ManyToOne
+    @JoinColumn
+    private Goal goal;
 
-
+    @ManyToOne
+    @JoinColumn
+    private WorkoutPlan workoutPlan;
 }
