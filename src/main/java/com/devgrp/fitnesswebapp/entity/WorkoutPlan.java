@@ -1,13 +1,12 @@
 package com.devgrp.fitnesswebapp.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -17,8 +16,29 @@ public class WorkoutPlan {
     @Id
     @GeneratedValue
     private int id;
+
+    @Column( nullable = false )
     private int duration;//in days
-    private LocalDate createdDate;
-    private boolean publicView;
+
+    @Column( nullable = false )
+    private LocalDate createdDate = LocalDate.now();
+
+    @Column( nullable = false )
+    private boolean isPublic = false;
+
+    @OneToMany(mappedBy = "workoutPlan")
+    private List<WorkoutExercise> exercises;
+
+    @OneToMany(mappedBy = "followingWorkoutPlan")
+    private List<User> users;
+
+    @OneToMany(mappedBy = "workoutPlan")
+    private List<Issue> issues;
+
+    @OneToMany(mappedBy = "workoutPlan")
+    private List<Notification> notifications;
+
+    @OneToMany(mappedBy = "workoutPlan")
+    private List<WorkoutPlanUserReview> userReviews;
 
 }
