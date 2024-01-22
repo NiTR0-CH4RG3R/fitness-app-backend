@@ -4,13 +4,14 @@ import com.devgrp.fitnesswebapp.dto.ExerciseDTO;
 import com.devgrp.fitnesswebapp.dto.ExerciseGetDTO;
 import com.devgrp.fitnesswebapp.dto.ResponseDTO;
 import com.devgrp.fitnesswebapp.service.ExerciseService;
-import com.devgrp.fitnesswebapp.util.OffsetCount;
+import com.devgrp.fitnesswebapp.util.PageElement;
 import com.devgrp.fitnesswebapp.util.VarList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.awt.print.Pageable;
 import java.util.List;
 
 @RestController
@@ -52,9 +53,9 @@ public class ExerciseController {
     }
 
     @GetMapping(value = "/get")
-    public ResponseEntity getExercise(@RequestBody OffsetCount offsetCount) {
+    public ResponseEntity getExercise(@RequestBody PageElement pageElement) {
         try {
-            List<ExerciseGetDTO> exerciseGetDTOList = exerciseService.getExercise(offsetCount.getOffset(), offsetCount.getCount());
+            List<ExerciseGetDTO> exerciseGetDTOList = exerciseService.getExercise(pageElement.getPage(), pageElement.getPage());
             responseDTO.setCode(VarList.RSP_SUCCESS);
             responseDTO.setMessage("success");
             responseDTO.setContent(exerciseGetDTOList);
