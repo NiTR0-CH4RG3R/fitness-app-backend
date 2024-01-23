@@ -1,12 +1,13 @@
 package com.devgrp.fitnesswebapp.dto;
 
 import jakarta.persistence.Column;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.stereotype.Component;
 
 //@Data
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ExerciseGetDTO {
     @Setter
     private Integer id;
