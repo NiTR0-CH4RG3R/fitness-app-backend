@@ -25,14 +25,14 @@ public class ExerciseController {
     private ResponseDTO responseDTO;
 
     @PostMapping(value = "/add")
-    public ResponseEntity addExercise(@RequestBody ExerciseDTO exerciseDTO) {
+    public ResponseEntity<ResponseDTO> addExercise(@RequestBody ExerciseDTO exerciseDTO) {
         try {
             String res = exerciseService.addExercise(exerciseDTO);
             if (res.equals("00")) {
                 responseDTO.setCode(VarList.RSP_SUCCESS);
                 responseDTO.setMessage("Success");
                 responseDTO.setContent(exerciseDTO);
-                return new ResponseEntity(responseDTO, HttpStatus.ACCEPTED);
+                return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.ACCEPTED);
             } else if (res.equals("06")) {
                 responseDTO.setCode(VarList.RSP_DUPLICATED);
                 responseDTO.setMessage("Allready added");
