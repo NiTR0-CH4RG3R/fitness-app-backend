@@ -2,7 +2,6 @@ package com.devgrp.fitnesswebapp.service;
 import com.devgrp.fitnesswebapp.dto.ExerciseDTO;
 import com.devgrp.fitnesswebapp.dto.ExerciseGetDTO;
 import com.devgrp.fitnesswebapp.entity.Exercise;
-import com.devgrp.fitnesswebapp.repository.ExercisePageRepository;
 import com.devgrp.fitnesswebapp.repository.ExerciseRepository;
 import com.devgrp.fitnesswebapp.util.VarList;
 import jakarta.transaction.Transactional;
@@ -22,7 +21,7 @@ public class ExerciseService {
     @Autowired
     private ExerciseRepository exerciseRepository;
     @Autowired
-    private ExercisePageRepository exercisePageRepository;
+    private ExerciseRepository exercisePageRepository;
     @Autowired
     private ModelMapper modelMapper;
     public String addExercise(ExerciseDTO exerciseDTO) {
@@ -34,9 +33,8 @@ public class ExerciseService {
             return VarList.RSP_SUCCESS;
         }
     }
-    public List<ExerciseGetDTO> getExercise(int pageNo,int noOfElemnts){
-        Pageable page= (Pageable) PageRequest.of(pageNo,noOfElemnts);
-        List<Exercise> exerciseList=exercisePageRepository.findAll(page);
+    public List<ExerciseGetDTO> getExercise(int pageNo,int noOfElements){
+        List<Exercise> exerciseList=exerciseRepository.findAll(PageRequest.of(pageNo,noOfElements)).toList();
         return modelMapper.map(exerciseList,new TypeToken<ArrayList<ExerciseGetDTO>>(){}.getType());
     }
     public long getExerciseCount(){
