@@ -53,84 +53,84 @@ public class ExerciseController {
     }
 
     @GetMapping(value = "/get")
-    public ResponseEntity getExercise(@RequestBody PageElement pageElement) {
+    public ResponseEntity<ResponseDTO> getExercise( @RequestBody PageElement pageElement) {
         try {
-            List<ExerciseGetDTO> exerciseGetDTOList = exerciseService.getExercise(pageElement.getPage(), pageElement.getPage());
+            List<ExerciseGetDTO> exerciseGetDTOList = exerciseService.getExercise(pageElement.getPage(), pageElement.getNoOfElements());
             responseDTO.setCode(VarList.RSP_SUCCESS);
             responseDTO.setMessage("success");
             responseDTO.setContent(exerciseGetDTOList);
-            return new ResponseEntity(responseDTO, HttpStatus.ACCEPTED);
+            return new ResponseEntity<>(responseDTO, HttpStatus.ACCEPTED);
         } catch (Exception ex) {
             responseDTO.setCode(VarList.RSP_ERROR);
             responseDTO.setMessage(ex.getMessage());
             responseDTO.setContent(null);
-            return new ResponseEntity(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @GetMapping(value = "/getCount")
-    public ResponseEntity getCount() {
+    public ResponseEntity<ResponseDTO> getCount() {
         try {
             long count = exerciseService.getExerciseCount();
             responseDTO.setCode(VarList.RSP_SUCCESS);
             responseDTO.setMessage("success");
             responseDTO.setContent(count);
-            return new ResponseEntity(responseDTO, HttpStatus.ACCEPTED);
+            return new ResponseEntity<>(responseDTO, HttpStatus.ACCEPTED);
         } catch (Exception ex) {
             responseDTO.setCode(VarList.RSP_ERROR);
             responseDTO.setMessage(ex.getMessage());
             responseDTO.setContent(null);
-            return new ResponseEntity(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
     @PutMapping(value = "/update")
-    public ResponseEntity updateExercise(@RequestBody ExerciseDTO exerciseDTO) {
+    public ResponseEntity<ResponseDTO> updateExercise(@RequestBody ExerciseGetDTO exerciseGetDTO) {
         try {
-            String res = exerciseService.updateExercise(exerciseDTO);
+            String res = exerciseService.updateExercise(exerciseGetDTO);
             if (res.equals("00")) {
                 responseDTO.setCode(VarList.RSP_SUCCESS);
                 responseDTO.setMessage("Success");
-                responseDTO.setContent(exerciseDTO);
-                return new ResponseEntity(responseDTO, HttpStatus.ACCEPTED);
+                responseDTO.setContent(exerciseGetDTO);
+                return new ResponseEntity<>(responseDTO, HttpStatus.ACCEPTED);
             } else if (res.equals("01")) {
                 responseDTO.setCode(VarList.RSP_NO_DATA_FOUND);
                 responseDTO.setMessage("Data not found");
                 responseDTO.setContent(null);
-                return new ResponseEntity(responseDTO, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
             } else {
                 responseDTO.setCode(VarList.RSP_ERROR);
                 responseDTO.setMessage("Error");
                 responseDTO.setContent(null);
-                return new ResponseEntity(responseDTO, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
             }
         } catch (Exception ex) {
             responseDTO.setCode(VarList.RSP_ERROR);
             responseDTO.setMessage(ex.getMessage());
             responseDTO.setContent(null);
-            return new ResponseEntity(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @GetMapping(value = "/search/{exerciseID}")
-    public ResponseEntity searchEmployee(@PathVariable int exerciseID){
+    @GetMapping(value = "/search/{exerciseName}")
+    public ResponseEntity<ResponseDTO> searchExercise(@PathVariable String exerciseName){
         try{
-            ExerciseGetDTO employeeDTO=exerciseService.searchExercise(exerciseID);
-            if(employeeDTO!=null){
+            ExerciseGetDTO exerciseGetDTO=exerciseService.searchExercise(exerciseName);
+            if(exerciseGetDTO!=null){
                 responseDTO.setCode(VarList.RSP_SUCCESS);
                 responseDTO.setMessage("Success");
-                responseDTO.setContent(employeeDTO);
-                return new ResponseEntity(responseDTO, HttpStatus.ACCEPTED);
+                responseDTO.setContent(exerciseGetDTO);
+                return new ResponseEntity<>(responseDTO, HttpStatus.ACCEPTED);
             }
             else{
                 responseDTO.setCode(VarList.RSP_NO_DATA_FOUND);
-                responseDTO.setMessage("Exercisee not found");
-                responseDTO.setContent(employeeDTO);
-                return new ResponseEntity(responseDTO, HttpStatus.BAD_REQUEST);
+                responseDTO.setMessage("Exercise not found");
+                responseDTO.setContent(null);
+                return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
             }
         }catch (Exception ex){
             responseDTO.setCode(VarList.RSP_ERROR);
             responseDTO.setMessage(ex.getMessage());
             responseDTO.setContent(null);
-            return new ResponseEntity(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
