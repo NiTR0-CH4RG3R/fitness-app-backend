@@ -6,6 +6,7 @@ import com.devgrp.fitnesswebapp.dto.UserDTO;
 import com.devgrp.fitnesswebapp.dto.UserGetDTO;
 import com.devgrp.fitnesswebapp.entity.Goal;
 import com.devgrp.fitnesswebapp.entity.User;
+import com.devgrp.fitnesswebapp.entity.types.GoalType;
 import com.devgrp.fitnesswebapp.repository.GoalRepository;
 import com.devgrp.fitnesswebapp.repository.UserRepository;
 import com.devgrp.fitnesswebapp.util.VarList;
@@ -31,59 +32,60 @@ public class UserService {
     private ModelMapper modelMapper;
     @Autowired
     private GoalRepository goalRepository;
-    public String createUser(UserDTO userDTO){
-        if(userRepository.existsByEmail(userDTO.getEmail())){
+
+    public String createUser(UserDTO userDTO) {
+        if (userRepository.existsByEmail(userDTO.getEmail())) {
             return VarList.RSP_DUPLICATED;
-        }
-        else{
-            userRepository.save(modelMapper.map(userDTO,User.class));
+        } else {
+            userRepository.save(modelMapper.map(userDTO, User.class));
             return VarList.RSP_SUCCESS;
         }
     }
-    public String updateUser(UserDTO userDTO){
-        if(userRepository.existsByEmail(userDTO.getEmail())){
-            userRepository.save(modelMapper.map(userDTO,User.class));
+
+    public String updateUser(UserDTO userDTO) {
+        if (userRepository.existsByEmail(userDTO.getEmail())) {
+            userRepository.save(modelMapper.map(userDTO, User.class));
             return VarList.RSP_SUCCESS;
-        }
-        else{
+        } else {
             return VarList.RSP_NO_DATA_FOUND;
         }
     }
 
-    public List<UserGetDTO> getAllUsers(){
-        List<User> userList=userRepository.findAll();
-        return modelMapper.map(userList,new TypeToken<ArrayList<UserGetDTO>>(){}.getType());
+    public List<UserGetDTO> getAllUsers() {
+        List<User> userList = userRepository.findAll();
+        return modelMapper.map(userList, new TypeToken<ArrayList<UserGetDTO>>() {
+        }.getType());
     }
-    public UserGetDTO searchUser(String userEmail){
-        if(userRepository.existsByEmail(userEmail)){
-            User user=userRepository.findUserByEmail(userEmail).orElse(null);
-            return modelMapper.map(user,UserGetDTO.class);
-        }
-        else {
+
+    public UserGetDTO searchUser(String userEmail) {
+        if (userRepository.existsByEmail(userEmail)) {
+            User user = userRepository.findUserByEmail(userEmail).orElse(null);
+            return modelMapper.map(user, UserGetDTO.class);
+        } else {
             return null;
         }
     }
-    public String deleteUser( String userEmail){
-        if(userRepository.existsByEmail(userEmail)){
+
+    public String deleteUser(String userEmail) {
+        if (userRepository.existsByEmail(userEmail)) {
             userRepository.deleteByEmail(userEmail);
             return VarList.RSP_SUCCESS;
-        }
-        else{
+        } else {
             return VarList.RSP_NO_DATA_FOUND;
         }
     }
-    public String addGoal(String userEmail,GoalDTO goalDTO) {
+
+    public String addGoal(String userEmail, GoalDTO goalDTO) {
         try {
-            if (userRepository.existsByEmail(userEmail)){
-                User user=userRepository.findUserByEmail(userEmail).orElse(null);
-                Goal goal=modelMapper.map(goalDTO, Goal.class);
+            if (userRepository.existsByEmail(userEmail)) {
+                User user = userRepository.findUserByEmail(userEmail).orElse(null);
+                Goal goal = modelMapper.map(goalDTO, Goal.class);
                 assert user != null;
-                if(user.getGoals()==null){
-                    ArrayList<Goal> goals= new ArrayList<>();
+                if (user.getGoals() == null) {
+                    ArrayList<Goal> goals = new ArrayList<>();
                     goals.add(goal);
-                }
-                else {
-                    user.getGoals().add(user.getGoals().size(),goal);
+                } else {
+                    user.getGoals().add(user.getGoals().size(), goal);
                 }
                 userRepository.save(user);
                 return VarList.RSP_SUCCESS;
@@ -94,20 +96,146 @@ public class UserService {
             return e.getMessage();
         }
     }
-    public List<GoalGetDTO> getAllGoals(String userEmail){
+    public List<GoalGetDTO> getAllGoals(String userEmail) {
         User user = userRepository.findUserByEmail(userEmail).orElse(null);
-        if ( user == null ) return null;
+        if (user == null) return null;
         List<Goal> goalList = user.getGoals();
-        if ( goalList == null ) return null;
-        return modelMapper.map( goalList, new TypeToken<ArrayList<GoalGetDTO>> () {}.getType());
+        if (goalList == null) return null;
+        return modelMapper.map(goalList, new TypeToken<ArrayList<GoalGetDTO>>() {
+        }.getType());
     }
-    public GoalGetDTO searchGoal(String userEmail,String goalName){
+
+    public GoalGetDTO searchGoal(String userEmail, GoalType goalType) {
         User user = userRepository.findUserByEmail(userEmail).orElse(null);
-        if ( user == null ) return null;
+        if (user == null) return null;
         List<Goal> goalList = user.getGoals();
-        for(int i=0;i<goalList.size();i++){
-            if(goalList.contains(goalName))
-                //[TODO]:complete by getting from the goalDTO
+        if (goalList == null) return null;
+        int i = 0;
+        while (goalList.get(i).getType() != goalType) {
+            i++;
         }
+        if (i < goalList.size()-1) {
+            return modelMapper.map(goalList.get(i), GoalGetDTO.class);
+        }
+        return null;
     }
+    public String updateGoal(String userEmail, GoalType goalType,GoalDTO goalDTO){
+        User user = userRepository.findUserByEmail(userEmail).orElse(null);
+        if (user == null) return VarList.RSP_NO_DATA_FOUND;
+        List<Goal> goalList = user.getGoals();
+        if (goalList == null) return VarList.RSP_NO_DATA_FOUND;
+        int j=0;
+
+        while (goalList.get(j).getType() != goalType) {
+            j++;
+        }
+        if (j < goalList.size() - 1) {
+            goalList.set(j, modelMapper.map(goalDTO, Goal.class));
+            user.setGoals(goalList);
+            userRepository.save(user);
+            return VarList.RSP_SUCCESS;
+        }
+        return VarList.RSP_NO_DATA_FOUND;
+    }
+
+    public String deleteGoal(String userEmail, GoalType goalType){
+        User user = userRepository.findUserByEmail(userEmail).orElse(null);
+        if (user == null) return VarList.RSP_NO_DATA_FOUND;
+        List<Goal> goalList = user.getGoals();
+        if (goalList == null) return VarList.RSP_NO_DATA_FOUND;
+        int j = 0;
+        while (goalList.get(j).getType() != goalType){
+            j++;
+        }
+        if(j < goalList.size()-1){
+            goalList.remove(j);
+            user.setGoals(goalList);
+            userRepository.save(user);
+            return VarList.RSP_SUCCESS;
+        }
+        return VarList.RSP_NO_DATA_FOUND;
+    }
+//Workout plan
+public String addWorkoutPlan(String userEmail, GoalDTO goalDTO) {
+    try {
+        if (userRepository.existsByEmail(userEmail)) {
+            User user = userRepository.findUserByEmail(userEmail).orElse(null);
+            Goal goal = modelMapper.map(goalDTO, Goal.class);
+            assert user != null;
+            if (user.getGoals() == null) {
+                ArrayList<Goal> goals = new ArrayList<>();
+                goals.add(goal);
+            } else {
+                user.getGoals().add(user.getGoals().size(), goal);
+            }
+            userRepository.save(user);
+            return VarList.RSP_SUCCESS;
+        } else {
+            return VarList.RSP_ERROR;
+        }
+    } catch (Exception e) {
+        return e.getMessage();
+    }
+}
+
+    public List<GoalGetDTO> getAllGoals(String userEmail) {
+        User user = userRepository.findUserByEmail(userEmail).orElse(null);
+        if (user == null) return null;
+        List<Goal> goalList = user.getGoals();
+        if (goalList == null) return null;
+        return modelMapper.map(goalList, new TypeToken<ArrayList<GoalGetDTO>>() {
+        }.getType());
+    }
+
+    public GoalGetDTO searchGoal(String userEmail, GoalType goalType) {
+        User user = userRepository.findUserByEmail(userEmail).orElse(null);
+        if (user == null) return null;
+        List<Goal> goalList = user.getGoals();
+        if (goalList == null) return null;
+        int i = 0;
+        while (goalList.get(i).getType() != goalType) {
+            i++;
+        }
+        if (i < goalList.size()-1) {
+            return modelMapper.map(goalList.get(i), GoalGetDTO.class);
+        }
+        return null;
+    }
+    public String updateGoal(String userEmail, GoalType goalType,GoalDTO goalDTO){
+        User user = userRepository.findUserByEmail(userEmail).orElse(null);
+        if (user == null) return VarList.RSP_NO_DATA_FOUND;
+        List<Goal> goalList = user.getGoals();
+        if (goalList == null) return VarList.RSP_NO_DATA_FOUND;
+        int j=0;
+
+        while (goalList.get(j).getType() != goalType) {
+            j++;
+        }
+        if (j < goalList.size() - 1) {
+            goalList.set(j, modelMapper.map(goalDTO, Goal.class));
+            user.setGoals(goalList);
+            userRepository.save(user);
+            return VarList.RSP_SUCCESS;
+        }
+        return VarList.RSP_NO_DATA_FOUND;
+    }
+
+    public String deleteGoal(String userEmail, GoalType goalType){
+        User user = userRepository.findUserByEmail(userEmail).orElse(null);
+        if (user == null) return VarList.RSP_NO_DATA_FOUND;
+        List<Goal> goalList = user.getGoals();
+        if (goalList == null) return VarList.RSP_NO_DATA_FOUND;
+        int j = 0;
+        while (goalList.get(j).getType() != goalType){
+            j++;
+        }
+        if(j < goalList.size()-1){
+            goalList.remove(j);
+            user.setGoals(goalList);
+            userRepository.save(user);
+            return VarList.RSP_SUCCESS;
+        }
+        return VarList.RSP_NO_DATA_FOUND;
+    }
+
 }
