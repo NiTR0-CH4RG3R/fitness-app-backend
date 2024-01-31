@@ -72,7 +72,7 @@ public class User {
     private List<WorkoutPlanUserReview> workoutPlanReviews;
 
     @OneToMany(mappedBy = "followedBy")
-    private List<Goal> goals;
+    private List<Goal> goals=null;
 
     @OneToMany(mappedBy = "createdBy")
     private List<Issue> issues;
