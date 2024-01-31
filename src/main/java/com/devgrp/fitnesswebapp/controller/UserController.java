@@ -1,9 +1,11 @@
 package com.devgrp.fitnesswebapp.controller;
 
+import com.devgrp.fitnesswebapp.dto.GoalGetDTO;
 import com.devgrp.fitnesswebapp.dto.ResponseDTO;
 import com.devgrp.fitnesswebapp.dto.UserDTO;
 import com.devgrp.fitnesswebapp.dto.UserGetDTO;
 import com.devgrp.fitnesswebapp.service.UserService;
+import com.devgrp.fitnesswebapp.util.GoalUser;
 import com.devgrp.fitnesswebapp.util.VarList;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -129,5 +131,43 @@ public class UserController {
             return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @PostMapping(value = "/addGoal")
+    public ResponseEntity<ResponseDTO> addGoal(@RequestBody GoalUser goalUser){
+        try{
+            String res= userService.addGoal(goalUser.getUserEmail(),goalUser.getGoalDTO());
+            if(res.equals("00")){
+                responseDTO.setCode(VarList.RSP_SUCCESS);
+                responseDTO.setMessage("Goal Successfully added");
+                responseDTO.setContent(goalUser);
+                return new ResponseEntity<>(responseDTO,HttpStatus.ACCEPTED);
+            }
+            else {
+                responseDTO.setCode(VarList.RSP_ERROR);
+                responseDTO.setMessage("error");
+                responseDTO.setContent(null);
+                return new ResponseEntity<>(responseDTO,HttpStatus.BAD_REQUEST);
+            }
+        }
+        catch (Exception ex){
+                responseDTO.setCode(VarList.RSP_ERROR);
+                responseDTO.setMessage(ex.getMessage());
+                responseDTO.setContent(null);
+                return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @GetMapping(value = "/getAllGoals/{userEmail}")
+    public ResponseEntity<ResponseDTO> getAllGoals(@PathVariable String userEmail) {
+        try {
+            List<GoalGetDTO> goalGetDTOList = userService.getAllGoals(userEmail);
+            responseDTO.setCode(VarList.RSP_SUCCESS);
+            responseDTO.setMessage("success");
+            responseDTO.setContent(goalGetDTOList);
+            return new ResponseEntity<>(responseDTO, HttpStatus.ACCEPTED);
+        } catch (Exception ex) {
+            responseDTO.setCode(VarList.RSP_ERROR);
+            responseDTO.setMessage(ex.getMessage());
+            responseDTO.setContent(null);
+            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
