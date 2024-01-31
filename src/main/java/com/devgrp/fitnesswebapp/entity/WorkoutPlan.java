@@ -18,6 +18,9 @@ public class WorkoutPlan {
     private Integer id;
 
     @Column( nullable = false )
+    private String name ;
+
+    @Column( nullable = false )
     private Integer duration;//in days
 
     @Column( nullable = false )
