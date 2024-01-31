@@ -10,8 +10,6 @@ import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
-import java.awt.print.Pageable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,11 +19,9 @@ public class ExerciseService {
     @Autowired
     private ExerciseRepository exerciseRepository;
     @Autowired
-    private ExerciseRepository exercisePageRepository;
-    @Autowired
     private ModelMapper modelMapper;
     public String addExercise(ExerciseDTO exerciseDTO) {
-        if (exerciseRepository.existsById(exerciseDTO.getId())){
+        if (exerciseRepository.existsByName(exerciseDTO.getName())){
             return VarList.RSP_DUPLICATED;
         }
         else{
@@ -40,18 +36,18 @@ public class ExerciseService {
     public long getExerciseCount(){
         return exerciseRepository.count();
     }
-    public String updateExercise(ExerciseDTO exerciseDTO){
-        if(exerciseRepository.existsById(exerciseDTO.getId())){
-            exerciseRepository.save(modelMapper.map(exerciseDTO,Exercise.class));
+    public String updateExercise(ExerciseGetDTO exerciseGetDTO){
+        if(exerciseRepository.existsByName(exerciseGetDTO.getName())){
+            exerciseRepository.save(modelMapper.map(exerciseGetDTO,Exercise.class));
             return VarList.RSP_SUCCESS;
         }
         else{
             return VarList.RSP_NO_DATA_FOUND;
         }
     }
-    public ExerciseGetDTO searchExercise(int exerciseID){
-        if(exerciseRepository.existsById(exerciseID)){
-            Exercise exercise=exerciseRepository.findById(exerciseID).orElse(null);
+    public ExerciseGetDTO searchExercise(String exerciseName){
+        if(exerciseRepository.existsByName(exerciseName)){
+            Exercise exercise=exerciseRepository.findByName(exerciseName).orElse(null);
             return modelMapper.map(exercise,ExerciseGetDTO.class);
         }
         else {
