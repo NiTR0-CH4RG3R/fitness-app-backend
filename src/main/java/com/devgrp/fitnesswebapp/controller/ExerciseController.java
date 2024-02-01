@@ -32,23 +32,23 @@ public class ExerciseController {
                 responseDTO.setCode(VarList.RSP_SUCCESS);
                 responseDTO.setMessage("Success");
                 responseDTO.setContent(exerciseDTO);
-                return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.ACCEPTED);
+                return new ResponseEntity<>(responseDTO, HttpStatus.ACCEPTED);
             } else if (res.equals("06")) {
                 responseDTO.setCode(VarList.RSP_DUPLICATED);
                 responseDTO.setMessage("Allready added");
                 responseDTO.setContent(null);
-                return new ResponseEntity(responseDTO, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
             } else {
                 responseDTO.setCode(VarList.RSP_ERROR);
                 responseDTO.setMessage("Error");
                 responseDTO.setContent(null);
-                return new ResponseEntity(responseDTO, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
             }
         } catch (Exception ex) {
             responseDTO.setCode(VarList.RSP_ERROR);
             responseDTO.setMessage(ex.getMessage());
             responseDTO.setContent(null);
-            return new ResponseEntity(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

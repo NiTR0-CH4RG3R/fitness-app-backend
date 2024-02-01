@@ -2,10 +2,12 @@ package com.devgrp.fitnesswebapp.service;
 
 import com.devgrp.fitnesswebapp.dto.*;
 import com.devgrp.fitnesswebapp.entity.Goal;
+import com.devgrp.fitnesswebapp.entity.Notification;
 import com.devgrp.fitnesswebapp.entity.User;
 import com.devgrp.fitnesswebapp.entity.WorkoutPlan;
 import com.devgrp.fitnesswebapp.entity.types.GoalType;
 import com.devgrp.fitnesswebapp.repository.GoalRepository;
+import com.devgrp.fitnesswebapp.repository.NotificationRepository;
 import com.devgrp.fitnesswebapp.repository.UserRepository;
 import com.devgrp.fitnesswebapp.repository.WorkoutPlanRepository;
 import com.devgrp.fitnesswebapp.util.VarList;
@@ -31,6 +33,8 @@ public class UserService {
     private ModelMapper modelMapper;
     @Autowired
     private GoalRepository goalRepository;
+    @Autowired
+    private NotificationRepository notificationRepository;
 
     public String createUser(UserDTO userDTO) {
         if (userRepository.existsByEmail(userDTO.getEmail())) {
@@ -249,6 +253,33 @@ public String followWorkoutPlan(String userEmail,int workoutPlanId){
         userRepository.save(user);
         return VarList.RSP_SUCCESS;
     }
-    //public String
+
+    public String deleteCreatedWorkoutPlan(String userEmail,int workoutPlanId){
+        User user=userRepository.findUserByEmail(userEmail).orElse(null);
+        if(user==null) return VarList.RSP_NO_DATA_FOUND;
+        List<WorkoutPlan> workoutPlanList=user.getCreatedWorkoutPlans();
+        if(workoutPlanList==null) return VarList.RSP_NO_DATA_FOUND;
+        int j = 0;
+        while (workoutPlanList.get(j).getId() != workoutPlanId){
+            j++;
+        }
+        if(j < workoutPlanList.size()-1){
+            workoutPlanList.remove(j);
+            user.setCreatedWorkoutPlans(workoutPlanList);
+            userRepository.save(user);
+            return VarList.RSP_SUCCESS;
+        }
+        return VarList.RSP_NO_DATA_FOUND;
+
+    }
+    //Notification
+    public List<NotificationGetDTO> getAllNotifications(String userEmail){
+        User user = userRepository.findUserByEmail(userEmail).orElse(null);
+        if (user == null) return null;
+        List<Notification> notificationList = user.getNotifications();
+        if (notificationList == null) return null;
+        return modelMapper.map(notificationList, new TypeToken<ArrayList<NotificationGetDTO>>() {
+        }.getType());
+    }
 
 }

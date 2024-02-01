@@ -268,14 +268,15 @@ public class UserController {
         }
     }
 
-    @PostMapping(value = "/updateGoal")
-    public ResponseEntity<ResponseDTO> updateGoal(@RequestBody GoalUserEmail goalUserEmail){
+
+    @PostMapping(value = "/updateCreatedWorkoutPlan")
+    public ResponseEntity<ResponseDTO> updateFollowedWorkoutPlan(@RequestBody UpdateFollowedWorkoutPlan updateFollowedWorkoutPlan){
         try{
-            String res=userService.updateGoal(goalUserEmail.getUserEmail(),goalUserEmail.getGoalType(),goalUserEmail.getGoalDTO());
+            String res=userService.updateFollowedWorkoutPlan(updateFollowedWorkoutPlan.getUserEmail(),updateFollowedWorkoutPlan.getWorkoutPlanDTO());
             if(res.equals("00")){
                 responseDTO.setCode(VarList.RSP_SUCCESS);
-                responseDTO.setMessage("Succesfully updated");//[TODO]:edit code to update user
-                responseDTO.setContent(goalUserEmail.getGoalDTO());
+                responseDTO.setMessage("Succesfully updated");
+                responseDTO.setContent(updateFollowedWorkoutPlan.getWorkoutPlanDTO());
                 return new ResponseEntity<>(responseDTO, HttpStatus.ACCEPTED);
             } else{
                 responseDTO.setCode(VarList.RSP_NO_DATA_FOUND);
@@ -291,10 +292,58 @@ public class UserController {
             return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @DeleteMapping(value = "/deleteGoal")
-    public ResponseEntity<ResponseDTO> deleteGoal(@RequestBody GoalDelete goalDelete) {
+
+
+    @PostMapping(value = "/updateFollowedWorkoutPlan")
+    public ResponseEntity<ResponseDTO> updateCreatedWorkoutPlan(@RequestBody UpdateCreatedWorkoutPlan updateCreatedWorkoutPlan){
+        try{
+            String res=userService.updateCreatedWorkoutPlan(updateCreatedWorkoutPlan.getUserEmail(),updateCreatedWorkoutPlan.getWorkoutPlanId(),updateCreatedWorkoutPlan.getWorkoutPlanDTO());
+            if(res.equals("00")){
+                responseDTO.setCode(VarList.RSP_SUCCESS);
+                responseDTO.setMessage("Succesfully updated");
+                responseDTO.setContent(updateCreatedWorkoutPlan.getWorkoutPlanDTO());
+                return new ResponseEntity<>(responseDTO, HttpStatus.ACCEPTED);
+            } else{
+                responseDTO.setCode(VarList.RSP_NO_DATA_FOUND);
+                responseDTO.setMessage("Goal Not Found");
+                responseDTO.setContent(null);
+                return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
+            }
+        }
+        catch (Exception ex){
+            responseDTO.setCode(VarList.RSP_ERROR);
+            responseDTO.setMessage(ex.getMessage());
+            responseDTO.setContent(null);
+            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping(value = "/deleteFollowedWorkoutPlan/{userEmail}")
+    public ResponseEntity<ResponseDTO> deleteFollowedWorkoutPlan(@PathVariable String userEmail) {
         try {
-            String res = userService.deleteGoal(goalDelete.getUseremail(),goalDelete.getGoalType());
+            String res = userService.deleteFollowedWorkoutPlan(userEmail);
+            if (res.equals("00")) {
+                responseDTO.setCode(VarList.RSP_SUCCESS);
+                responseDTO.setMessage("Succesfully deleted");
+                responseDTO.setContent(null);
+                return new ResponseEntity<>(responseDTO, HttpStatus.ACCEPTED);
+            } else {
+                responseDTO.setCode(VarList.RSP_NO_DATA_FOUND);
+                responseDTO.setMessage("WorkoutPlan Not Found");
+                responseDTO.setContent(null);
+                return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
+            }
+        } catch (Exception ex) {
+            responseDTO.setCode(VarList.RSP_ERROR);
+            responseDTO.setMessage(ex.getMessage());
+            responseDTO.setContent(null);
+            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @DeleteMapping(value = "/deleteCreatededWorkoutPlan")
+    public ResponseEntity<ResponseDTO> deleteCreatedWorkoutPlan(@RequestBody UserEmailWorkoutPlanId userEmailWorkoutPlanId) {
+        try {
+            String res = userService.deleteCreatedWorkoutPlan(userEmailWorkoutPlanId.getUserEmail(),userEmailWorkoutPlanId.getWorkoutPlanId());
             if (res.equals("00")) {
                 responseDTO.setCode(VarList.RSP_SUCCESS);
                 responseDTO.setMessage("Succesfully deleted");
@@ -313,5 +362,23 @@ public class UserController {
             return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    //Notification
+    @GetMapping(value = "/getAllNotifications/{userEmail}")
+    public ResponseEntity<ResponseDTO> getAllNotifications(@PathVariable String userEmail) {
+        try {
+            List<NotificationGetDTO> notificationGetDTOList = userService.getAllNotifications(userEmail);
+            responseDTO.setCode(VarList.RSP_SUCCESS);
+            responseDTO.setMessage("success");
+            responseDTO.setContent(notificationGetDTOList);
+            return new ResponseEntity<>(responseDTO, HttpStatus.ACCEPTED);
+        } catch (Exception ex) {
+            responseDTO.setCode(VarList.RSP_ERROR);
+            responseDTO.setMessage(ex.getMessage());
+            responseDTO.setContent(null);
+            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
 }
