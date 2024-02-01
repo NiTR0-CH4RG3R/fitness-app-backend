@@ -234,34 +234,21 @@ public String followWorkoutPlan(String userEmail,int workoutPlanId){
             j++;
         }
         if (j < workoutPlanList.size() - 1) {
-            workoutPlanList.set(j, modelMapper.map(goalDTO, Goal.class));//[Todo]:Complete this
-            user.setGoals(goalList);
+            workoutPlanList.set(j, modelMapper.map(workoutPlanDTO, WorkoutPlan.class));//[Todo]:Complete this
+            user.setCreatedWorkoutPlans(workoutPlanList);
             userRepository.save(user);
             return VarList.RSP_SUCCESS;
         }
         return VarList.RSP_NO_DATA_FOUND;
     }
-    public String deleteWorkoutPlan(String userEmail){
+    public String deleteFollowedWorkoutPlan(String userEmail){
         User user = userRepository.findUserByEmail(userEmail).orElse(null);
         if (user == null) return VarList.RSP_NO_DATA_FOUND;
         if (user.getFollowingWorkoutPlan()==null) return VarList.RSP_NO_DATA_FOUND;
         user.setFollowingWorkoutPlan(null);
         userRepository.save(user);
         return VarList.RSP_SUCCESS;
-
-        /*List<Goal> goalList = user.getGoals();
-        if (goalList == null) return VarList.RSP_NO_DATA_FOUND;
-        int j = 0;
-        while (goalList.get(j).getType() != goalType){
-            j++;
-        }
-        if(j < goalList.size()-1){
-            goalList.remove(j);
-            user.setGoals(goalList);
-            userRepository.save(user);
-            return VarList.RSP_SUCCESS;
-        }
-        return VarList.RSP_NO_DATA_FOUND;*/
     }
+    //public String
 
 }
