@@ -7,7 +7,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ExerciseDTO {
-
     private String name;
 
     private String description;
@@ -15,8 +14,4 @@ public class ExerciseDTO {
     private String equipment;
 
     private String gifURL;
-
-    private List<String> image;
-
-    private List<String> targetMuscle;
 }

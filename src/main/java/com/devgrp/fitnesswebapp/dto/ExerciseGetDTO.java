@@ -23,5 +23,4 @@ public class ExerciseGetDTO {
 
     @Setter
     private String gifURL;
-
 }
