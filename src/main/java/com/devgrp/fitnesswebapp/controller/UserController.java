@@ -2,10 +2,7 @@ package com.devgrp.fitnesswebapp.controller;
 
 import com.devgrp.fitnesswebapp.dto.*;
 import com.devgrp.fitnesswebapp.service.UserService;
-import com.devgrp.fitnesswebapp.util.GoalDelete;
-import com.devgrp.fitnesswebapp.util.GoalUser;
-import com.devgrp.fitnesswebapp.util.GoalUserEmail;
-import com.devgrp.fitnesswebapp.util.VarList;
+import com.devgrp.fitnesswebapp.util.*;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -216,14 +213,14 @@ public class UserController {
     }
 
     //workout plan
-    @PostMapping(value = "/addGoal")
-    public ResponseEntity<ResponseDTO> addGoal(@RequestBody GoalUser goalUser){
+    @PostMapping(value = "/addWorkoutPlan")
+    public ResponseEntity<ResponseDTO> addWorkoutPlan(@RequestBody AddWorkoutPlan addWorkoutPlan){
         try{
-            String res= userService.addGoal(goalUser.getUserEmail(),goalUser.getGoalDTO());
+            String res= userService.addWorkoutPlan(addWorkoutPlan.getUserEmail(),addWorkoutPlan.getWorkoutPlanDTO());
             if(res.equals("00")){
                 responseDTO.setCode(VarList.RSP_SUCCESS);
                 responseDTO.setMessage("Goal Successfully added");
-                responseDTO.setContent(goalUser);
+                responseDTO.setContent(addWorkoutPlan);
                 return new ResponseEntity<>(responseDTO,HttpStatus.ACCEPTED);
             }
             else {
@@ -240,13 +237,13 @@ public class UserController {
             return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @GetMapping(value = "/getAllGoals/{userEmail}")
-    public ResponseEntity<ResponseDTO> getAllGoals(@PathVariable String userEmail) {
+    @GetMapping(value = "/getFollowededWorkoutPlans/{userEmail}")
+    public ResponseEntity<ResponseDTO> getFollowedWorkoutPlan(@PathVariable String userEmail) {
         try {
-            List<GoalGetDTO> goalGetDTOList = userService.getAllGoals(userEmail);
+            WorkoutPlanGetDTO workoutPlanGetDTO = userService.getFollowedWorkoutPlan(userEmail);
             responseDTO.setCode(VarList.RSP_SUCCESS);
             responseDTO.setMessage("success");
-            responseDTO.setContent(goalGetDTOList);
+            responseDTO.setContent(workoutPlanGetDTO);
             return new ResponseEntity<>(responseDTO, HttpStatus.ACCEPTED);
         } catch (Exception ex) {
             responseDTO.setCode(VarList.RSP_ERROR);
@@ -255,6 +252,22 @@ public class UserController {
             return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    @GetMapping(value = "/getCreatedWorkoutPlans/{userEmail}")
+    public ResponseEntity<ResponseDTO> getCreatedWorkoutPlans(@PathVariable String userEmail) {
+        try {
+            List<WorkoutPlanGetDTO> workoutPlanGetDTOList = userService.getCreatedWorkoutPlans(userEmail);
+            responseDTO.setCode(VarList.RSP_SUCCESS);
+            responseDTO.setMessage("success");
+            responseDTO.setContent(workoutPlanGetDTOList);
+            return new ResponseEntity<>(responseDTO, HttpStatus.ACCEPTED);
+        } catch (Exception ex) {
+            responseDTO.setCode(VarList.RSP_ERROR);
+            responseDTO.setMessage(ex.getMessage());
+            responseDTO.setContent(null);
+            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @PostMapping(value = "/updateGoal")
     public ResponseEntity<ResponseDTO> updateGoal(@RequestBody GoalUserEmail goalUserEmail){
         try{
