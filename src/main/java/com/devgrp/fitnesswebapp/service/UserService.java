@@ -1,11 +1,9 @@
 package com.devgrp.fitnesswebapp.service;
 
-import com.devgrp.fitnesswebapp.dto.GoalDTO;
-import com.devgrp.fitnesswebapp.dto.GoalGetDTO;
-import com.devgrp.fitnesswebapp.dto.UserDTO;
-import com.devgrp.fitnesswebapp.dto.UserGetDTO;
+import com.devgrp.fitnesswebapp.dto.*;
 import com.devgrp.fitnesswebapp.entity.Goal;
 import com.devgrp.fitnesswebapp.entity.User;
+import com.devgrp.fitnesswebapp.entity.WorkoutPlan;
 import com.devgrp.fitnesswebapp.entity.types.GoalType;
 import com.devgrp.fitnesswebapp.repository.GoalRepository;
 import com.devgrp.fitnesswebapp.repository.UserRepository;
@@ -156,16 +154,17 @@ public class UserService {
         return VarList.RSP_NO_DATA_FOUND;
     }
 //Workout plan
-public String addWorkoutPlan(String userEmail, GoalDTO goalDTO) {
+public String addWorkoutPlan(String userEmail, WorkoutPlanDTO workoutPlanDTO) {
     try {
         if (userRepository.existsByEmail(userEmail)) {
             User user = userRepository.findUserByEmail(userEmail).orElse(null);
-            Goal goal = modelMapper.map(goalDTO, Goal.class);
-            assert user != null;
-            if (user.getGoals() == null) {
-                ArrayList<Goal> goals = new ArrayList<>();
-                goals.add(goal);
+            WorkoutPlan workoutPlan = modelMapper.map(workoutPlanDTO, WorkoutPlan.class);
+            if(user==null) return VarList.RSP_NO_DATA_FOUND;
+            if (user.getFollowingWorkoutPlan() == null) {
+                ArrayList<WorkoutPlan> workoutPlans = new ArrayList<>();
+                workoutPlans.add(workoutPlan);
             } else {
+                user.getFollowingWorkoutPlan().
                 user.getGoals().add(user.getGoals().size(), goal);
             }
             userRepository.save(user);
