@@ -1,6 +1,4 @@
 package com.devgrp.fitnesswebapp.dto;
-
-import jakarta.persistence.Column;
 import lombok.Data;
 
 import java.time.LocalDate;

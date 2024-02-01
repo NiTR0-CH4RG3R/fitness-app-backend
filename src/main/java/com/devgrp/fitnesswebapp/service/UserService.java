@@ -75,7 +75,18 @@ public class UserService {
 
     public String addGoal(String userEmail, GoalDTO goalDTO) {
         try {
-            if (userRepository.existsByEmail(userEmail)) {
+            User user = userRepository.findUserByEmail(userEmail).orElse(null);
+            if(user==null) return VarList.RSP_ERROR;
+            Goal goal = modelMapper.map(goalDTO, Goal.class);
+            if (user.getGoals() == null) {
+                ArrayList<Goal> goals = new ArrayList<>();
+                goals.add(goal);
+            } else {
+                user.getGoals().add(user.getGoals().size(), goal);
+            }
+            userRepository.save(user);
+            return VarList.RSP_SUCCESS;
+            /*if (userRepository.existsByEmail(userEmail)) {
                 User user = userRepository.findUserByEmail(userEmail).orElse(null);
                 Goal goal = modelMapper.map(goalDTO, Goal.class);
                 assert user != null;
@@ -89,7 +100,7 @@ public class UserService {
                 return VarList.RSP_SUCCESS;
             } else {
                 return VarList.RSP_ERROR;
-            }
+            }*/
         } catch (Exception e) {
             return e.getMessage();
         }
@@ -156,54 +167,42 @@ public class UserService {
 //Workout plan
 public String addWorkoutPlan(String userEmail, WorkoutPlanDTO workoutPlanDTO) {
     try {
-        if (userRepository.existsByEmail(userEmail)) {
+        User user = userRepository.findUserByEmail(userEmail).orElse(null);
+        if(user==null) return VarList.RSP_ERROR;
+        WorkoutPlan workoutPlan = modelMapper.map(workoutPlanDTO, WorkoutPlan.class);
+        user.setFollowingWorkoutPlan(workoutPlan);
+        userRepository.save(user);
+        return VarList.RSP_SUCCESS;
+        /*if (userRepository.existsByEmail(userEmail)) {
             User user = userRepository.findUserByEmail(userEmail).orElse(null);
             WorkoutPlan workoutPlan = modelMapper.map(workoutPlanDTO, WorkoutPlan.class);
-            if(user==null) return VarList.RSP_NO_DATA_FOUND;
-            if (user.getFollowingWorkoutPlan() == null) {
-                ArrayList<WorkoutPlan> workoutPlans = new ArrayList<>();
-                workoutPlans.add(workoutPlan);
-            } else {
-                user.getFollowingWorkoutPlan().
-                user.getGoals().add(user.getGoals().size(), goal);
-            }
+            user.setFollowingWorkoutPlan(workoutPlan);
             userRepository.save(user);
             return VarList.RSP_SUCCESS;
         } else {
-            return VarList.RSP_ERROR;
-        }
+            return VarList.RSP_NO_DATA_FOUND;
+        }*/
     } catch (Exception e) {
         return e.getMessage();
     }
 }
 
-    public List<GoalGetDTO> getAllGoals(String userEmail) {
+    public List<WorkoutPlanGetDTO> getWorkoutPlan(String userEmail) {
         User user = userRepository.findUserByEmail(userEmail).orElse(null);
         if (user == null) return null;
-        List<Goal> goalList = user.getGoals();
-        if (goalList == null) return null;
-        return modelMapper.map(goalList, new TypeToken<ArrayList<GoalGetDTO>>() {
+        if (user.getFollowingWorkoutPlan() == null) return null;
+        return modelMapper.map(user.getFollowingWorkoutPlan(), new TypeToken<ArrayList<WorkoutPlanGetDTO>>() {
         }.getType());
     }
 
-    public GoalGetDTO searchGoal(String userEmail, GoalType goalType) {
-        User user = userRepository.findUserByEmail(userEmail).orElse(null);
-        if (user == null) return null;
-        List<Goal> goalList = user.getGoals();
-        if (goalList == null) return null;
-        int i = 0;
-        while (goalList.get(i).getType() != goalType) {
-            i++;
-        }
-        if (i < goalList.size()-1) {
-            return modelMapper.map(goalList.get(i), GoalGetDTO.class);
-        }
-        return null;
-    }
-    public String updateGoal(String userEmail, GoalType goalType,GoalDTO goalDTO){
+    public String updateWorkoutPlan(String userEmail,WorkoutPlanDTO workoutPlanDTO){
         User user = userRepository.findUserByEmail(userEmail).orElse(null);
         if (user == null) return VarList.RSP_NO_DATA_FOUND;
-        List<Goal> goalList = user.getGoals();
+        if (user.getFollowingWorkoutPlan()==null) return VarList.RSP_NO_DATA_FOUND;
+        user.setFollowingWorkoutPlan(modelMapper.map(workoutPlanDTO,WorkoutPlan.class));
+        userRepository.save(user);
+        return VarList.RSP_SUCCESS;
+        /*List<Goal> goalList = user.getGoals();
         if (goalList == null) return VarList.RSP_NO_DATA_FOUND;
         int j=0;
 
@@ -216,13 +215,18 @@ public String addWorkoutPlan(String userEmail, WorkoutPlanDTO workoutPlanDTO) {
             userRepository.save(user);
             return VarList.RSP_SUCCESS;
         }
-        return VarList.RSP_NO_DATA_FOUND;
+        return VarList.RSP_NO_DATA_FOUND;*/
     }
 
-    public String deleteGoal(String userEmail, GoalType goalType){
+    public String deleteWorkoutPlan(String userEmail){
         User user = userRepository.findUserByEmail(userEmail).orElse(null);
         if (user == null) return VarList.RSP_NO_DATA_FOUND;
-        List<Goal> goalList = user.getGoals();
+        if (user.getFollowingWorkoutPlan()==null) return VarList.RSP_NO_DATA_FOUND;
+        user.setFollowingWorkoutPlan(null);
+        userRepository.save(user);
+        return VarList.RSP_SUCCESS;
+
+        /*List<Goal> goalList = user.getGoals();
         if (goalList == null) return VarList.RSP_NO_DATA_FOUND;
         int j = 0;
         while (goalList.get(j).getType() != goalType){
@@ -234,7 +238,7 @@ public String addWorkoutPlan(String userEmail, WorkoutPlanDTO workoutPlanDTO) {
             userRepository.save(user);
             return VarList.RSP_SUCCESS;
         }
-        return VarList.RSP_NO_DATA_FOUND;
+        return VarList.RSP_NO_DATA_FOUND;*/
     }
 
 }

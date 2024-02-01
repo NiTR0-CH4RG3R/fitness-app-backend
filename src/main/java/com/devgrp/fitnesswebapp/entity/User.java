@@ -54,7 +54,7 @@ public class User {
 
     @ManyToOne
     @JoinColumn
-    private WorkoutPlan followingWorkoutPlan;
+    private WorkoutPlan followingWorkoutPlan=null;
 
     @Column( nullable = false )
     private boolean goalNotification = true;
