@@ -45,6 +45,12 @@ public class ExerciseService {
             return VarList.RSP_NO_DATA_FOUND;
         }
     }
+    public String deleteExercise(String exerciseName){
+        Exercise exercise=exerciseRepository.findByName(exerciseName).orElse(null);
+        if(exercise==null) return VarList.RSP_NO_DATA_FOUND;
+        exerciseRepository.delete(exercise);
+        return VarList.RSP_SUCCESS;
+    }
     public ExerciseGetDTO searchExercise(String exerciseName){
         if(exerciseRepository.existsByName(exerciseName)){
             Exercise exercise=exerciseRepository.findByName(exerciseName).orElse(null);
