@@ -133,4 +133,31 @@ public class ExerciseController {
             return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    @DeleteMapping(value = "/delete/{exerciseName}")
+    public ResponseEntity<ResponseDTO> deleteExercise(@PathVariable String exerciseName) {
+        try {
+            String res = exerciseService.deleteExercise(exerciseName);
+            if (res.equals("00")) {
+                responseDTO.setCode(VarList.RSP_SUCCESS);
+                responseDTO.setMessage("Success");
+                responseDTO.setContent(null);
+                return new ResponseEntity<>(responseDTO, HttpStatus.ACCEPTED);
+            } else if (res.equals("01")) {
+                responseDTO.setCode(VarList.RSP_NO_DATA_FOUND);
+                responseDTO.setMessage("Data not found");
+                responseDTO.setContent(null);
+                return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
+            } else {
+                responseDTO.setCode(VarList.RSP_ERROR);
+                responseDTO.setMessage("Error");
+                responseDTO.setContent(null);
+                return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
+            }
+        } catch (Exception ex) {
+            responseDTO.setCode(VarList.RSP_ERROR);
+            responseDTO.setMessage(ex.getMessage());
+            responseDTO.setContent(null);
+            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
