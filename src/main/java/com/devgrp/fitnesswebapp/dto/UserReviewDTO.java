@@ -14,5 +14,4 @@ public class UserReviewDTO {
     private Integer entityId;
     private Integer rating;
     private String comment;
-    private LocalDateTime createdDateTime;
 }
