@@ -2,6 +2,7 @@ package com.devgrp.fitnesswebapp.service;
 
 import com.devgrp.fitnesswebapp.dto.NotificationDTO;
 import com.devgrp.fitnesswebapp.dto.NotificationGetDTO;
+import com.devgrp.fitnesswebapp.entity.Exercise;
 import com.devgrp.fitnesswebapp.entity.Notification;
 import com.devgrp.fitnesswebapp.repository.NotificationRepository;
 import com.devgrp.fitnesswebapp.util.VarList;
@@ -32,5 +33,10 @@ public class NotificationService {
         else
             return VarList.RSP_NO_DATA_FOUND;
     }
-
+    public String deleteNotification(int notificationId){
+        Notification notification=notificationRepository.findById(notificationId).orElse(null);
+        if(notification==null) return VarList.RSP_NO_DATA_FOUND;
+        notificationRepository.delete(notification);
+        return VarList.RSP_SUCCESS;
+    }
 }
