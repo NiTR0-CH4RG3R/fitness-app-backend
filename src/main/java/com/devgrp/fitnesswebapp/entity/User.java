@@ -52,6 +52,9 @@ public class User {
     @Column( nullable = false )
     private String emergencyContact;
 
+    @OneToMany(mappedBy = "createdBy")
+    private List<WorkoutPlan> createdWorkoutPlans;
+
     @ManyToOne
     @JoinColumn
     private WorkoutPlan followingWorkoutPlan=null;

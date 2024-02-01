@@ -26,6 +26,10 @@ public class WorkoutPlan {
     @Column( nullable = false )
     private LocalDate createdDate = LocalDate.now();
 
+    @ManyToOne
+    @JoinColumn
+    private User createdBy;
+
     @Column( nullable = false )
     private boolean isPublic = false;
 
