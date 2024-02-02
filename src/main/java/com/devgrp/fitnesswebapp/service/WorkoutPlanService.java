@@ -1,12 +1,12 @@
 package com.devgrp.fitnesswebapp.service;
 
-import com.devgrp.fitnesswebapp.dto.ExerciseGetDTO;
-import com.devgrp.fitnesswebapp.dto.UserReviewDTO;
-import com.devgrp.fitnesswebapp.dto.WorkoutPlanDTO;
-import com.devgrp.fitnesswebapp.dto.WorkoutPlanGetDTO;
+import com.devgrp.fitnesswebapp.dto.*;
+import com.devgrp.fitnesswebapp.entity.ExerciseUserReview;
 import com.devgrp.fitnesswebapp.entity.User;
 import com.devgrp.fitnesswebapp.entity.WorkoutPlan;
 import com.devgrp.fitnesswebapp.entity.WorkoutPlanUserReview;
+import com.devgrp.fitnesswebapp.entity.compositekeys.ExerciseUserReviewKey;
+import com.devgrp.fitnesswebapp.entity.compositekeys.WorkoutPlanUserReviewKey;
 import com.devgrp.fitnesswebapp.repository.UserRepository;
 import com.devgrp.fitnesswebapp.repository.WorkoutPlanRepository;
 import com.devgrp.fitnesswebapp.repository.WorkoutPlanUserReviewRepository;
@@ -56,5 +56,20 @@ public class WorkoutPlanService {
         catch (Exception ex){
             return VarList.RSP_ERROR;
         }
+    }
+    public List<UserReviewGetDTO> getWorkoutPlanUserReview(){
+        try{
+            List<WorkoutPlanUserReview> workoutPlanUserReviewList=workoutPlanUserReviewRepository.findAll();
+            return modelMapper.map(workoutPlanUserReviewList,new TypeToken<ArrayList<UserReviewDTO>>(){}.getType());
+        }
+        catch (Exception ex){
+            return null;
+        }
+    }
+    public String deleteWorkoutPlanReview(WorkoutPlanUserReviewKey workoutPlanUserReviewKey){
+        WorkoutPlanUserReview workoutPlanUserReview=workoutPlanUserReviewRepository.findById(workoutPlanUserReviewKey).orElse(null);
+        if(workoutPlanUserReview==null) return VarList.RSP_NO_DATA_FOUND;
+        workoutPlanUserReviewRepository.delete(workoutPlanUserReview);
+        return VarList.RSP_SUCCESS;
     }
 }

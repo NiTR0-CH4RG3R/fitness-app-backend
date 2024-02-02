@@ -2,7 +2,10 @@ package com.devgrp.fitnesswebapp.controller;
 
 
 import com.devgrp.fitnesswebapp.dto.ResponseDTO;
+import com.devgrp.fitnesswebapp.dto.UserReviewGetDTO;
 import com.devgrp.fitnesswebapp.dto.WorkoutPlanGetDTO;
+import com.devgrp.fitnesswebapp.entity.compositekeys.ExerciseUserReviewKey;
+import com.devgrp.fitnesswebapp.entity.compositekeys.WorkoutPlanUserReviewKey;
 import com.devgrp.fitnesswebapp.service.WorkoutPlanService;
 import com.devgrp.fitnesswebapp.util.EmailReview;
 import com.devgrp.fitnesswebapp.util.VarList;
@@ -46,6 +49,49 @@ public class WorkoutPlanController {
                 return new ResponseEntity<>(responseDTO, HttpStatus.ACCEPTED);
             }
             else {
+                responseDTO.setCode(VarList.RSP_ERROR);
+                responseDTO.setMessage("Error");
+                responseDTO.setContent(null);
+                return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
+            }
+        } catch (Exception ex) {
+            responseDTO.setCode(VarList.RSP_ERROR);
+            responseDTO.setMessage(ex.getMessage());
+            responseDTO.setContent(null);
+            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @GetMapping(value = "/getWorkoutPlanReview")
+    public ResponseEntity<ResponseDTO> getWorkoutPlanUserReview() {
+        try {
+            List<UserReviewGetDTO> userReviewGetDTOList = workoutPlanService.getWorkoutPlanUserReview();
+            responseDTO.setCode(VarList.RSP_SUCCESS);
+            responseDTO.setMessage("success");
+            responseDTO.setContent(userReviewGetDTOList);
+            return new ResponseEntity<>(responseDTO, HttpStatus.ACCEPTED);
+        } catch (Exception ex) {
+            responseDTO.setCode(VarList.RSP_ERROR);
+            responseDTO.setMessage(ex.getMessage());
+            responseDTO.setContent(null);
+            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping(value = "/deleteWorkoutPlanUserReview/{workoutPlanUserReviewKey}")
+    public ResponseEntity<ResponseDTO> deleteWorkoutPlanUserReview(@PathVariable WorkoutPlanUserReviewKey workoutPlanUserReviewKey) {
+        try {
+            String res = workoutPlanService.deleteWorkoutPlanReview(workoutPlanUserReviewKey);
+            if (res.equals("00")) {
+                responseDTO.setCode(VarList.RSP_SUCCESS);
+                responseDTO.setMessage("Success");
+                responseDTO.setContent(null);
+                return new ResponseEntity<>(responseDTO, HttpStatus.ACCEPTED);
+            } else if (res.equals("01")) {
+                responseDTO.setCode(VarList.RSP_NO_DATA_FOUND);
+                responseDTO.setMessage("Data not found");
+                responseDTO.setContent(null);
+                return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
+            } else {
                 responseDTO.setCode(VarList.RSP_ERROR);
                 responseDTO.setMessage("Error");
                 responseDTO.setContent(null);
