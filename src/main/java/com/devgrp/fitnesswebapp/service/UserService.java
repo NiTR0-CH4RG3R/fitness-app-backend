@@ -326,7 +326,9 @@ public String followWorkoutPlan(String userEmail,int workoutPlanId){
         }
         return VarList.RSP_NO_DATA_FOUND;
     }
-    public String addDailyProgress(String useremail){
+    /*public String addDailyProgress(String useremail){
     //[TODO]:complete this
     }
+    */
+
 }
