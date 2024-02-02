@@ -379,6 +379,90 @@ public class UserController {
             return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    //issues
+    @PostMapping(value = "/addIssue")
+    public ResponseEntity<ResponseDTO> addIssue(@RequestBody EmailIssue emailIssue){
+        try{
+            String res= userService.addIssues(emailIssue.getUserEmail(),emailIssue.getIssueDTO());
+            if(res.equals("00")){
+                responseDTO.setCode(VarList.RSP_SUCCESS);
+                responseDTO.setMessage("Goal Successfully added");
+                responseDTO.setContent(emailIssue);
+                return new ResponseEntity<>(responseDTO,HttpStatus.ACCEPTED);
+            }
+            else {
+                responseDTO.setCode(VarList.RSP_ERROR);
+                responseDTO.setMessage("error");
+                responseDTO.setContent(null);
+                return new ResponseEntity<>(responseDTO,HttpStatus.BAD_REQUEST);
+            }
+        }
+        catch (Exception ex){
+            responseDTO.setCode(VarList.RSP_ERROR);
+            responseDTO.setMessage(ex.getMessage());
+            responseDTO.setContent(null);
+            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @GetMapping(value = "/getAllIssues/{userEmail}")
+    public ResponseEntity<ResponseDTO> getAllIssues(@PathVariable String userEmail) {
+        try {
+            List<IssueGetDTO> issueGetDTOList = userService.getAllIssues(userEmail);
+            responseDTO.setCode(VarList.RSP_SUCCESS);
+            responseDTO.setMessage("success");
+            responseDTO.setContent(issueGetDTOList);
+            return new ResponseEntity<>(responseDTO, HttpStatus.ACCEPTED);
+        } catch (Exception ex) {
+            responseDTO.setCode(VarList.RSP_ERROR);
+            responseDTO.setMessage(ex.getMessage());
+            responseDTO.setContent(null);
+            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @PostMapping(value = "/updateGoal")
+    public ResponseEntity<ResponseDTO> updateIssue(@RequestBody UpdateEmailIssue updateEmailIssue){
+        try{
+            String res=userService.updateIssue(updateEmailIssue.getUserEmail(),updateEmailIssue.getType(),updateEmailIssue.getIssueDTO());
+            if(res.equals("00")){
+                responseDTO.setCode(VarList.RSP_SUCCESS);
+                responseDTO.setMessage("Succesfully updated");//[TODO]:edit code to update user
+                responseDTO.setContent(updateEmailIssue.getIssueDTO());
+                return new ResponseEntity<>(responseDTO, HttpStatus.ACCEPTED);
+            } else{
+                responseDTO.setCode(VarList.RSP_NO_DATA_FOUND);
+                responseDTO.setMessage("Issue Not Found");
+                responseDTO.setContent(null);
+                return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
+            }
+        }
+        catch (Exception ex){
+            responseDTO.setCode(VarList.RSP_ERROR);
+            responseDTO.setMessage(ex.getMessage());
+            responseDTO.setContent(null);
+            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @DeleteMapping(value = "/deleteIssue")
+    public ResponseEntity<ResponseDTO> deleteIssue(@RequestBody IssueDelete issueDelete) {
+        try {
+            String res = userService.deleteIssue(issueDelete.getUseremail(),issueDelete.getIssueType());
+            if (res.equals("00")) {
+                responseDTO.setCode(VarList.RSP_SUCCESS);
+                responseDTO.setMessage("Succesfully deleted");
+                responseDTO.setContent(null);
+                return new ResponseEntity<>(responseDTO, HttpStatus.ACCEPTED);
+            } else {
+                responseDTO.setCode(VarList.RSP_NO_DATA_FOUND);
+                responseDTO.setMessage("issue Not Found");
+                responseDTO.setContent(null);
+                return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
+            }
+        } catch (Exception ex) {
+            responseDTO.setCode(VarList.RSP_ERROR);
+            responseDTO.setMessage(ex.getMessage());
+            responseDTO.setContent(null);
+            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 }

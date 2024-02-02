@@ -1,11 +1,9 @@
 package com.devgrp.fitnesswebapp.service;
 
 import com.devgrp.fitnesswebapp.dto.*;
-import com.devgrp.fitnesswebapp.entity.Goal;
-import com.devgrp.fitnesswebapp.entity.Notification;
-import com.devgrp.fitnesswebapp.entity.User;
-import com.devgrp.fitnesswebapp.entity.WorkoutPlan;
+import com.devgrp.fitnesswebapp.entity.*;
 import com.devgrp.fitnesswebapp.entity.types.GoalType;
+import com.devgrp.fitnesswebapp.entity.types.IssueType;
 import com.devgrp.fitnesswebapp.repository.GoalRepository;
 import com.devgrp.fitnesswebapp.repository.NotificationRepository;
 import com.devgrp.fitnesswebapp.repository.UserRepository;
@@ -91,21 +89,7 @@ public class UserService {
             }
             userRepository.save(user);
             return VarList.RSP_SUCCESS;
-            /*if (userRepository.existsByEmail(userEmail)) {
-                User user = userRepository.findUserByEmail(userEmail).orElse(null);
-                Goal goal = modelMapper.map(goalDTO, Goal.class);
-                assert user != null;
-                if (user.getGoals() == null) {
-                    ArrayList<Goal> goals = new ArrayList<>();
-                    goals.add(goal);
-                } else {
-                    user.getGoals().add(user.getGoals().size(), goal);
-                }
-                userRepository.save(user);
-                return VarList.RSP_SUCCESS;
-            } else {
-                return VarList.RSP_ERROR;
-            }*/
+
         } catch (Exception e) {
             return e.getMessage();
         }
@@ -281,5 +265,65 @@ public String followWorkoutPlan(String userEmail,int workoutPlanId){
         return modelMapper.map(notificationList, new TypeToken<ArrayList<NotificationGetDTO>>() {
         }.getType());
     }
+    //issues
+    public String addIssues(String userEmail,IssueDTO issueDTO){
+        try {
+            User user=userRepository.findUserByEmail(userEmail).orElse(null);
+            if(user==null) return VarList.RSP_NO_DATA_FOUND;
+            Issue issue = modelMapper.map(issueDTO, Issue.class);
+            if (user.getIssues() == null) {
+                ArrayList<Issue> issues = new ArrayList<>();
+                issues.add(issue);
+            } else {
+                user.getIssues().add(user.getIssues().size(), issue);
+            }
+            userRepository.save(user);
+            return VarList.RSP_SUCCESS;
 
+        } catch (Exception e) {
+            return e.getMessage();
+        }
+    }
+    public List<IssueGetDTO> getAllIssues(String userEmail) {
+        User user = userRepository.findUserByEmail(userEmail).orElse(null);
+        if (user == null) return null;
+        List<Issue> issueList = user.getIssues();
+        if (issueList == null) return null;
+        return modelMapper.map(issueList, new TypeToken<ArrayList<GoalGetDTO>>() {
+        }.getType());
+    }
+    public String updateIssue(String userEmail, IssueType issueType, IssueDTO issueDTO){
+        User user = userRepository.findUserByEmail(userEmail).orElse(null);
+        if (user == null) return VarList.RSP_NO_DATA_FOUND;
+        List<Issue> issueList = user.getIssues();
+        if (issueList == null) return VarList.RSP_NO_DATA_FOUND;
+        int j=0;
+        while (issueList.get(j).getType() != issueType) {
+            j++;
+        }
+        if (j < issueList.size() - 1) {
+            issueList.set(j, modelMapper.map(issueDTO, Issue.class));
+            user.setIssues(issueList);
+            userRepository.save(user);
+            return VarList.RSP_SUCCESS;
+        }
+        return VarList.RSP_NO_DATA_FOUND;
+    }
+    public String deleteIssue(String userEmail, IssueType issueType){
+        User user = userRepository.findUserByEmail(userEmail).orElse(null);
+        if (user == null) return VarList.RSP_NO_DATA_FOUND;
+        List<Issue> issueList = user.getIssues();
+        if (issueList == null) return VarList.RSP_NO_DATA_FOUND;
+        int j = 0;
+        while (issueList.get(j).getType() != issueType){
+            j++;
+        }
+        if(j < issueList.size()-1){
+            issueList.remove(j);
+            user.setIssues(issueList);
+            userRepository.save(user);
+            return VarList.RSP_SUCCESS;
+        }
+        return VarList.RSP_NO_DATA_FOUND;
+    }
 }
