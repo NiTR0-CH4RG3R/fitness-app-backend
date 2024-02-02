@@ -96,7 +96,6 @@ public class ExerciseService {
         catch (Exception ex){
             return null;
         }
-
     }
     public String deleteExerciseReview(ExerciseUserReviewKey exerciseReviewId){
         ExerciseUserReview exerciseUserReview=exerciseUserReviewRepository.findById(exerciseReviewId).orElse(null);
