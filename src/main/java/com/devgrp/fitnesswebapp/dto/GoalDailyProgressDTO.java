@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GoalDailyProgressDTO {
+    private int goalID;
     private LocalDateTime date;
     private Float achievedValue;
 }

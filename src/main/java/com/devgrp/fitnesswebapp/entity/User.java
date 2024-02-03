@@ -2,6 +2,7 @@ package com.devgrp.fitnesswebapp.entity;
 
 import com.devgrp.fitnesswebapp.entity.types.UserType;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,16 +20,19 @@ public class User {
     private Integer id;
 
     @Column( nullable = false )
+    @NotBlank(message = "First Name is required")
     private String firstName;
 
     @Column( nullable = false )
+    @NotBlank(message = "Last Name is required")
     private String lastName;
 
     @Column( nullable = false )
+    @NotBlank(message = "User Type is required")
     private UserType type = UserType.USER;
 
-
     @Column( nullable = false ,unique = true)
+    @NotBlank(message = "User Email is required")
     private String email;
 
     @Column( nullable = false )

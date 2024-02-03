@@ -2,6 +2,7 @@ package com.devgrp.fitnesswebapp.service;
 
 import com.devgrp.fitnesswebapp.dto.*;
 import com.devgrp.fitnesswebapp.entity.*;
+import com.devgrp.fitnesswebapp.entity.compositekeys.GoalDailyProgressKey;
 import com.devgrp.fitnesswebapp.entity.types.GoalType;
 import com.devgrp.fitnesswebapp.entity.types.IssueType;
 import com.devgrp.fitnesswebapp.repository.GoalRepository;
@@ -326,9 +327,87 @@ public String followWorkoutPlan(String userEmail,int workoutPlanId){
         }
         return VarList.RSP_NO_DATA_FOUND;
     }
-    /*public String addDailyProgress(String useremail){
-    //[TODO]:complete this
+    public String addDailyProgress(String userEmail,GoalDailyProgressDTO goalDailyProgressDTO ){
+        try{
+            User user=userRepository.findUserByEmail(userEmail).orElse(null);
+            if (user==null) return VarList.RSP_NO_DATA_FOUND;
+            List<Goal> goalList=user.getGoals();
+            if(goalList==null) return VarList.RSP_NO_DATA_FOUND;
+            int j=0;
+            while (goalList.get(j).getId() != goalDailyProgressDTO.getGoalID()){
+                j++;
+            }
+            if(j < goalList.size()-1){
+                if(goalList.get(j).getDailyProgress()==null){
+                    ArrayList<GoalDailyProgress> goalDailyProgresses = new ArrayList<>();
+                    goalDailyProgresses.add(modelMapper.map(goalDailyProgressDTO,GoalDailyProgress.class));
+                    goalList.get(j).setDailyProgress(goalDailyProgresses);
+                    user.setGoals(goalList);
+                    userRepository.save(user);
+                    return VarList.RSP_SUCCESS;
+                }
+                else {
+                    goalList.get(j).getDailyProgress().add(modelMapper.map(goalDailyProgressDTO,GoalDailyProgress.class));
+                    user.setGoals(goalList);
+                    userRepository.save(user);
+                    return VarList.RSP_SUCCESS;
+                }
+            }
+            return VarList.RSP_NO_DATA_FOUND;
+        }
+        catch (Exception ex){
+           return VarList.RSP_ERROR;
+        }
     }
-    */
+    public GoalDailyProgressDTO getGoalDailyProgress(String userEmail, int goalId, GoalDailyProgressKey goalDailyProgressKey){
+        User user=userRepository.findUserByEmail(userEmail).orElse(null);
+        if (user==null) return null;
+        List<Goal> goalList=user.getGoals();
+        if(goalList==null) return null;
+        int j=0;
+        while (goalList.get(j).getId() != goalId){
+            j++;
+        }
+        List<GoalDailyProgress> goalDailyProgressList=goalList.get(j).getDailyProgress();
+        if(j < goalList.size()-1) {
+            if (goalList.get(j).getDailyProgress() == null) ;
+            return null;
+        }
+        else{
+            int k=0;
+            while (goalDailyProgressList.get(k).getId() != goalDailyProgressKey){
+                k++;
+            }
+            return modelMapper.map(goalDailyProgressList.get(k),new TypeToken<ArrayList<GoalDailyProgressDTO>>() {
+            }.getType());
+        }
+    }
+
+    public String deleteGoalDailyProgress(String userEmail, int goalId, GoalDailyProgressKey goalDailyProgressKey){
+        User user=userRepository.findUserByEmail(userEmail).orElse(null);
+        if (user==null) return VarList.RSP_NO_DATA_FOUND;
+        List<Goal> goalList=user.getGoals();
+        if(goalList==null) return VarList.RSP_NO_DATA_FOUND;
+        int j=0;
+        while (goalList.get(j).getId() != goalId){
+            j++;
+        }
+        List<GoalDailyProgress> goalDailyProgressList=goalList.get(j).getDailyProgress();
+        if(j < goalList.size()-1) {
+            if (goalList.get(j).getDailyProgress() == null) ;
+            return VarList.RSP_NO_DATA_FOUND;
+        }
+        else{
+            int k=0;
+            while (goalDailyProgressList.get(k).getId() != goalDailyProgressKey){
+                k++;
+            }
+            goalDailyProgressList.remove(k);
+            goalList.get(j).setDailyProgress(goalDailyProgressList);
+            user.setGoals(goalList);
+            userRepository.save(user);
+            return VarList.RSP_SUCCESS;
+        }
+    }
 
 }
