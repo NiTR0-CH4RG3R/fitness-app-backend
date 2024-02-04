@@ -53,12 +53,16 @@ public class UserService {
          */
     }
 
-    public String updateUser(UserDTO userDTO) {
-        if (userRepository.existsByEmail(userDTO.getEmail())) {
-            userRepository.save(modelMapper.map(userDTO, User.class));
+    public String updateUser(int userId,UserUpdateDTO userUpdateDTO) {
+        try{
+            if(!userRepository.existsById(userId)) return VarList.RSP_NO_DATA_FOUND;
+            User userU=modelMapper.map(userUpdateDTO, User.class);
+            userU.setId(userId);
+            userRepository.save(userU);
             return VarList.RSP_SUCCESS;
-        } else {
-            return VarList.RSP_NO_DATA_FOUND;
+        }
+        catch (Exception e){
+                return VarList.RSP_ERROR;
         }
     }
 

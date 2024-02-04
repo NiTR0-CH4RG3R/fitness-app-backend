@@ -29,12 +29,14 @@ public class UserController {
                 responseDTO.setMessage("Succesfully saved");
                 responseDTO.setContent(userDTO);
                 return new ResponseEntity<>(responseDTO, HttpStatus.ACCEPTED);
-            } else if (res.equals("06")) {
+            }
+            /*else if (res.equals("06")) {
                 responseDTO.setCode(VarList.RSP_DUPLICATED);
                 responseDTO.setMessage("Allready added");
                 responseDTO.setContent(null);
                 return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
             }
+             */
             else {
                 responseDTO.setCode(VarList.RSP_ERROR);
                 responseDTO.setMessage("Error");
@@ -65,14 +67,14 @@ public class UserController {
             return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @PutMapping(value="/update")
-    public ResponseEntity<ResponseDTO> updateUser(@RequestBody UserDTO userDTO){
+    @PutMapping(value="/update/{userid}")
+    public ResponseEntity<ResponseDTO> updateUser(@PathVariable int userid,@RequestBody UserUpdateDTO userUpdateDTO){
         try{
-            String res=userService.updateUser(userDTO);
+            String res=userService.updateUser(userid,userUpdateDTO);
             if(res.equals("00")){
                 responseDTO.setCode(VarList.RSP_SUCCESS);
                 responseDTO.setMessage("Succesfully updated");//[TODO]:edit code to update user
-                responseDTO.setContent(userDTO);
+                responseDTO.setContent(userUpdateDTO);
                 return new ResponseEntity<>(responseDTO, HttpStatus.ACCEPTED);
             } else{
                 responseDTO.setCode(VarList.RSP_NO_DATA_FOUND);
