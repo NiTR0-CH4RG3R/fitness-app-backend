@@ -53,9 +53,9 @@ public class UserService {
          */
     }
 
-    public String updateUser(int userId,UserUpdateDTO userUpdateDTO) {
+    public String updateUser(int userId,UserDTO userUpdateDTO) {
         try{
-            if(!userRepository.existsById(userId)) return VarList.RSP_NO_DATA_FOUND;
+           //if(!userRepository.existsById(userId)) return VarList.RSP_NO_DATA_FOUND;
             User userU=modelMapper.map(userUpdateDTO, User.class);
             userU.setId(userId);
             userRepository.save(userU);
