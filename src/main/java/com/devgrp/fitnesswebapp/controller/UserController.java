@@ -20,7 +20,7 @@ public class UserController {
     private UserService userService;
     @Autowired
     private ResponseDTO responseDTO;
-    @PatchMapping(value = "/add")
+    @PostMapping(value = "/add")
     public ResponseEntity<ResponseDTO> addUser(@RequestBody UserDTO userDTO){
         try{
             String res=userService.createUser(userDTO);
@@ -419,7 +419,7 @@ public class UserController {
             return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @PostMapping(value = "/updateGoal")
+    @PostMapping(value = "/updateIssue")
     public ResponseEntity<ResponseDTO> updateIssue(@RequestBody UpdateEmailIssue updateEmailIssue){
         try{
             String res=userService.updateIssue(updateEmailIssue.getUserEmail(),updateEmailIssue.getType(),updateEmailIssue.getIssueDTO());

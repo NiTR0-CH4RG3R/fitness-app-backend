@@ -17,6 +17,7 @@ public class UserDTO {
     private String lastName;
     private UserType type =UserType.USER;
     private String email;
+    private String password;
     private LocalDate dob;
     private String address;
     private String telephoneNo;

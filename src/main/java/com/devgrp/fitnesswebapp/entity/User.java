@@ -20,19 +20,19 @@ public class User {
     private Integer id;
 
     @Column( nullable = false )
-    @NotBlank(message = "First Name is required")
+    //@NotBlank(message = "First Name is required")
     private String firstName;
 
     @Column( nullable = false )
-    @NotBlank(message = "Last Name is required")
+    //@NotBlank(message = "Last Name is required")
     private String lastName;
 
     @Column( nullable = false )
-    @NotBlank(message = "User Type is required")
+    //@NotBlank(message = "User Type is required")
     private UserType type = UserType.USER;
 
     @Column( nullable = false ,unique = true)
-    @NotBlank(message = "User Email is required")
+    //@NotBlank(message = "User Email is required")
     private String email;
 
     @Column( nullable = false )

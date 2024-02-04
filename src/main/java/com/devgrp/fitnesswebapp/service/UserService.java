@@ -36,12 +36,21 @@ public class UserService {
     private NotificationRepository notificationRepository;
 
     public String createUser(UserDTO userDTO) {
-        if (userRepository.existsByEmail(userDTO.getEmail())) {
+        try{
+            userRepository.save(modelMapper.map(userDTO, User.class));
+            return VarList.RSP_SUCCESS;
+        }
+        catch (Exception ex){
+            return ex.getMessage();
+        }
+        /*if (userRepository.existsByEmail(userDTO.getEmail())) {
             return VarList.RSP_DUPLICATED;
         } else {
             userRepository.save(modelMapper.map(userDTO, User.class));
             return VarList.RSP_SUCCESS;
         }
+
+         */
     }
 
     public String updateUser(UserDTO userDTO) {
