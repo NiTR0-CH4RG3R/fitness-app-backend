@@ -1,6 +1,7 @@
 package com.devgrp.fitnesswebapp.controller;
 
 import com.devgrp.fitnesswebapp.dto.*;
+import com.devgrp.fitnesswebapp.entity.types.GoalType;
 import com.devgrp.fitnesswebapp.service.UserService;
 import com.devgrp.fitnesswebapp.util.*;
 import lombok.AllArgsConstructor;
@@ -68,13 +69,13 @@ public class UserController {
         }
     }
     @PutMapping(value="/update/{userid}")
-    public ResponseEntity<ResponseDTO> updateUser(@PathVariable int userid,@RequestBody UserDTO userUpdateDTO){
+    public ResponseEntity<ResponseDTO> updateUser(@PathVariable int userid,@RequestBody UserDTO userDTO){
         try{
-            String res=userService.updateUser(userid,userUpdateDTO);
+            String res=userService.updateUser(userid,userDTO);
             if(res.equals("00")){
                 responseDTO.setCode(VarList.RSP_SUCCESS);
                 responseDTO.setMessage("Succesfully updated");//[TODO]:edit code to update user
-                responseDTO.setContent(userUpdateDTO);
+                responseDTO.setContent(userDTO);
                 return new ResponseEntity<>(responseDTO, HttpStatus.ACCEPTED);
             } else{
                 responseDTO.setCode(VarList.RSP_NO_DATA_FOUND);
@@ -90,9 +91,9 @@ public class UserController {
             return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @GetMapping(value = "/search/{userEmail}")
-    public ResponseEntity<ResponseDTO> searchUser(@PathVariable String userEmail){
-        UserGetDTO userGetDTO=userService.searchUser(userEmail);
+    @GetMapping(value = "/search/{userId}")
+    public ResponseEntity<ResponseDTO> searchUser(@PathVariable int userId){
+        UserGetDTO userGetDTO=userService.searchUser(userId);
         if(userGetDTO!=null){
             responseDTO.setCode(VarList.RSP_SUCCESS);
             responseDTO.setMessage("Success");
@@ -106,10 +107,10 @@ public class UserController {
             return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
         }
     }
-    @DeleteMapping(value = "/delete/{userEmail}")
-    public ResponseEntity<ResponseDTO> deleteUser(@PathVariable String userEmail){
+    @DeleteMapping(value = "/delete/{userId}")
+    public ResponseEntity<ResponseDTO> deleteUser(@PathVariable int userId){
         try{
-            String res=userService.deleteUser(userEmail);
+            String res=userService.deleteUser(userId);
             if(res.equals("00")){
                 responseDTO.setCode(VarList.RSP_SUCCESS);
                 responseDTO.setMessage("Succesfully deleted");
@@ -129,14 +130,14 @@ public class UserController {
             return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @PostMapping(value = "/addGoal")
-    public ResponseEntity<ResponseDTO> addGoal(@RequestBody GoalUser goalUser){
+    @PostMapping(value = "/addGoal/{userId}")
+    public ResponseEntity<ResponseDTO> addGoal(@PathVariable int userId,@RequestBody GoalDTO goalDTO){
         try{
-            String res= userService.addGoal(goalUser.getUserEmail(),goalUser.getGoalDTO());
+            String res= userService.addGoal(userId,goalDTO);
             if(res.equals("00")){
                 responseDTO.setCode(VarList.RSP_SUCCESS);
                 responseDTO.setMessage("Goal Successfully added");
-                responseDTO.setContent(goalUser);
+                responseDTO.setContent(goalDTO);
                 return new ResponseEntity<>(responseDTO,HttpStatus.ACCEPTED);
             }
             else {
@@ -153,10 +154,10 @@ public class UserController {
                 return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @GetMapping(value = "/getAllGoals/{userEmail}")
-    public ResponseEntity<ResponseDTO> getAllGoals(@PathVariable String userEmail) {
+    @GetMapping(value = "/getAllGoals/{userId}")
+    public ResponseEntity<ResponseDTO> getAllGoals(@PathVariable int userId) {
         try {
-            List<GoalGetDTO> goalGetDTOList = userService.getAllGoals(userEmail);
+            List<GoalGetDTO> goalGetDTOList = userService.getAllGoals(userId);
             responseDTO.setCode(VarList.RSP_SUCCESS);
             responseDTO.setMessage("success");
             responseDTO.setContent(goalGetDTOList);
@@ -168,51 +169,51 @@ public class UserController {
             return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-//    @PostMapping(value = "/updateGoal")
-//    public ResponseEntity<ResponseDTO> updateGoal(@RequestBody GoalUserEmail goalUserEmail){
-//        try{
-//            String res=userService.updateGoal(goalUserEmail.getUserEmail(),goalUserEmail.getGoalType(),goalUserEmail.getGoalDTO());
-//            if(res.equals("00")){
-//                responseDTO.setCode(VarList.RSP_SUCCESS);
-//                responseDTO.setMessage("Succesfully updated");//[TODO]:edit code to update user
-//                responseDTO.setContent(goalUserEmail.getGoalDTO());
-//                return new ResponseEntity<>(responseDTO, HttpStatus.ACCEPTED);
-//            } else{
-//                responseDTO.setCode(VarList.RSP_NO_DATA_FOUND);
-//                responseDTO.setMessage("Goal Not Found");
-//                responseDTO.setContent(null);
-//                return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
-//            }
-//        }
-//        catch (Exception ex){
-//            responseDTO.setCode(VarList.RSP_ERROR);
-//            responseDTO.setMessage(ex.getMessage());
-//            responseDTO.setContent(null);
-//            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
-//    @DeleteMapping(value = "/deleteGoal")
-//    public ResponseEntity<ResponseDTO> deleteGoal(@RequestBody GoalDelete goalDelete) {
-//        try {
-//            String res = userService.deleteGoal(goalDelete.getUseremail(),goalDelete.getGoalType());
-//            if (res.equals("00")) {
-//                responseDTO.setCode(VarList.RSP_SUCCESS);
-//                responseDTO.setMessage("Succesfully deleted");
-//                responseDTO.setContent(null);
-//                return new ResponseEntity<>(responseDTO, HttpStatus.ACCEPTED);
-//            } else {
-//                responseDTO.setCode(VarList.RSP_NO_DATA_FOUND);
-//                responseDTO.setMessage("Goal Not Found");
-//                responseDTO.setContent(null);
-//                return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
-//            }
-//        } catch (Exception ex) {
-//            responseDTO.setCode(VarList.RSP_ERROR);
-//            responseDTO.setMessage(ex.getMessage());
-//            responseDTO.setContent(null);
-//            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
+    @PutMapping(value = "/updateGoal/{userID}/{goalType}")
+    public ResponseEntity<ResponseDTO> updateGoal(@PathVariable int userID, @PathVariable GoalType goalType,GoalDTO goalDTO){
+        try{
+            String res=userService.updateGoal(userID,goalType,goalDTO);
+            if(res.equals("00")){
+                responseDTO.setCode(VarList.RSP_SUCCESS);
+                responseDTO.setMessage("Succesfully updated");//[TODO]:edit code to update user
+                responseDTO.setContent(goalDTO);
+                return new ResponseEntity<>(responseDTO, HttpStatus.ACCEPTED);
+            } else{
+                responseDTO.setCode(VarList.RSP_NO_DATA_FOUND);
+                responseDTO.setMessage("Goal Not Found");
+                responseDTO.setContent(null);
+                return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
+            }
+        }
+        catch (Exception ex){
+            responseDTO.setCode(VarList.RSP_ERROR);
+            responseDTO.setMessage(ex.getMessage());
+            responseDTO.setContent(null);
+            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @DeleteMapping(value = "/deleteGoal/{userId}/{goalType}")
+    public ResponseEntity<ResponseDTO> deleteGoal(@PathVariable int userId,@PathVariable GoalType goalType) {
+        try {
+            String res = userService.deleteGoal(userId,goalType);
+            if (res.equals("00")) {
+                responseDTO.setCode(VarList.RSP_SUCCESS);
+                responseDTO.setMessage("Succesfully deleted");
+                responseDTO.setContent(null);
+                return new ResponseEntity<>(responseDTO, HttpStatus.ACCEPTED);
+            } else {
+                responseDTO.setCode(VarList.RSP_NO_DATA_FOUND);
+                responseDTO.setMessage("Goal Not Found");
+                responseDTO.setContent(null);
+                return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
+            }
+        } catch (Exception ex) {
+            responseDTO.setCode(VarList.RSP_ERROR);
+            responseDTO.setMessage(ex.getMessage());
+            responseDTO.setContent(null);
+            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     //workout plan
     @PostMapping(value = "/addWorkoutPlan")

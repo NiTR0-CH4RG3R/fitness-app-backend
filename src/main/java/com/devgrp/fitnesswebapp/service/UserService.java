@@ -55,10 +55,9 @@ public class UserService {
 
     public String updateUser(int userId,UserDTO userUpdateDTO) {
         try{
-           //if(!userRepository.existsById(userId)) return VarList.RSP_NO_DATA_FOUND;
-            User userU=modelMapper.map(userUpdateDTO, User.class);
-            userU.setId(userId);
-            userRepository.save(userU);
+            User user=modelMapper.map(userUpdateDTO, User.class);
+            user.setId(userId);
+            userRepository.save(user);
             return VarList.RSP_SUCCESS;
         }
         catch (Exception e){
@@ -72,27 +71,28 @@ public class UserService {
         }.getType());
     }
 
-    public UserGetDTO searchUser(String userEmail) {
-        if (userRepository.existsByEmail(userEmail)) {
-            User user = userRepository.findUserByEmail(userEmail).orElse(null);
+    public UserGetDTO searchUser(int userId) {
+        try {
+            User user = userRepository.findById(userId).orElse(null);
             return modelMapper.map(user, UserGetDTO.class);
-        } else {
+        }
+        catch (Exception ex){
             return null;
         }
     }
 
-    public String deleteUser(String userEmail) {
-        if (userRepository.existsByEmail(userEmail)) {
-            userRepository.deleteByEmail(userEmail);
+    public String deleteUser(int userId) {
+        try{
+            userRepository.deleteById(userId);
             return VarList.RSP_SUCCESS;
-        } else {
+        } catch (Exception ex){
             return VarList.RSP_NO_DATA_FOUND;
         }
     }
 
-    public String addGoal(String userEmail, GoalDTO goalDTO) {
+    public String addGoal(int userId, GoalDTO goalDTO) {
         try {
-            User user = userRepository.findUserByEmail(userEmail).orElse(null);
+            User user = userRepository.findById(userId).orElse(null);
             if(user==null) return VarList.RSP_ERROR;
             Goal goal = modelMapper.map(goalDTO, Goal.class);
             if (user.getGoals() == null) {
@@ -101,15 +101,17 @@ public class UserService {
             } else {
                 user.getGoals().add(user.getGoals().size(), goal);
             }
-            userRepository.save(user);
+            goal.setFollowedBy(user);
+            goalRepository.save(goal);
+            //userRepository.save(user);
             return VarList.RSP_SUCCESS;
 
         } catch (Exception e) {
             return e.getMessage();
         }
     }
-    public List<GoalGetDTO> getAllGoals(String userEmail) {
-        User user = userRepository.findUserByEmail(userEmail).orElse(null);
+    public List<GoalGetDTO> getAllGoals(int userId) {
+        User user = userRepository.findById(userId).orElse(null);
         if (user == null) return null;
         List<Goal> goalList = user.getGoals();
         if (goalList == null) return null;
@@ -131,17 +133,17 @@ public class UserService {
         }
         return null;
     }
-    public String updateGoal(String userEmail, GoalType goalType,GoalDTO goalDTO){
-        User user = userRepository.findUserByEmail(userEmail).orElse(null);
+    public String updateGoal(int userId, GoalType goalType,GoalDTO goalDTO){
+        User user = userRepository.findById(userId).orElse(null);
         if (user == null) return VarList.RSP_NO_DATA_FOUND;
         List<Goal> goalList = user.getGoals();
-        if (goalList == null) return VarList.RSP_NO_DATA_FOUND;
+        if (goalList == null) return VarList.RSP_NO_DATA_FOUND;//[TODO]:resolve index out of bound error
         int j=0;
         while (goalList.get(j).getType() != goalType) {
             j++;
         }
         if (j < goalList.size() - 1) {
-            goalList.set(j, modelMapper.map(goalDTO, Goal.class));
+            goalList.set(j-1, modelMapper.map(goalDTO, Goal.class));
             user.setGoals(goalList);
             userRepository.save(user);
             return VarList.RSP_SUCCESS;
@@ -149,8 +151,8 @@ public class UserService {
         return VarList.RSP_NO_DATA_FOUND;
     }
 
-    public String deleteGoal(String userEmail, GoalType goalType){
-        User user = userRepository.findUserByEmail(userEmail).orElse(null);
+    public String deleteGoal(int userId, GoalType goalType){
+        User user = userRepository.findById(userId).orElse(null);
         if (user == null) return VarList.RSP_NO_DATA_FOUND;
         List<Goal> goalList = user.getGoals();
         if (goalList == null) return VarList.RSP_NO_DATA_FOUND;
