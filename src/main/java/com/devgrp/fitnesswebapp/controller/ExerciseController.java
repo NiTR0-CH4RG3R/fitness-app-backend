@@ -9,21 +9,108 @@ import com.devgrp.fitnesswebapp.service.ExerciseService;
 import com.devgrp.fitnesswebapp.util.EmailReview;
 import com.devgrp.fitnesswebapp.util.PageElement;
 import com.devgrp.fitnesswebapp.util.VarList;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
-@RestController
 @CrossOrigin
+@AllArgsConstructor
+@RestController
 @RequestMapping(value = "ap1/v1/exercise")
 public class ExerciseController {
-    @Autowired
-    private ExerciseService exerciseService;
 
-    @Autowired
-    private ResponseDTO responseDTO;
+    private final ExerciseService exerciseService;
+
+    private final ResponseDTO responseDTO;
+
+//    public ResponseEntity<ResponseDTO> functionName() {
+//        ResponseDTO response = new ResponseDTO();
+//        HttpStatus status = HttpStatus.UNAUTHORIZED;
+//        try {
+//        }
+//        catch (Exception e) {
+//            System.out.println(e.getMessage());
+//        }
+//        return new ResponseEntity<ResponseDTO>( response, status );
+//    }
+
+    @GetMapping( value = "/all" )
+    public ResponseEntity<ResponseDTO> getExercises() {
+        ResponseDTO response = new ResponseDTO();
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
+
+        try {
+
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        return new ResponseEntity<ResponseDTO>( response, status );
+    }
+
+
+    @GetMapping
+    public ResponseEntity<ResponseDTO> getExercisesPage( @RequestParam(name = "page") Integer page, @RequestParam(name = "noOfElements") Integer noOfElements ) {
+        ResponseDTO response = new ResponseDTO();
+        HttpStatus status = HttpStatus.SERVICE_UNAVAILABLE;
+
+        try {
+            var result = exerciseService.getExercise(page, noOfElements);
+            response.setContent(result);
+            response.setMessage("Successful");
+            response.setCode(VarList.RSP_SUCCESS);
+            status = HttpStatus.OK;
+        }
+        catch (Exception e) {
+            response.setCode(VarList.RSP_ERROR);
+            response.setMessage("Error");
+            response.setContent(null);
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        return new ResponseEntity<ResponseDTO>(response, status);
+    }
+
+    @GetMapping(value = "/count")
+    public ResponseEntity<ResponseDTO> getExerciseCount() {
+        ResponseDTO response = new ResponseDTO();
+        HttpStatus status = HttpStatus.SERVICE_UNAVAILABLE;
+
+        try {
+            var result = exerciseService.getExerciseCount();
+            response.setContent(result);
+            response.setMessage("Successful");
+            response.setCode(VarList.RSP_SUCCESS);
+            status = HttpStatus.OK;
+        }
+        catch (Exception e) {
+            response.setCode(VarList.RSP_ERROR);
+            response.setMessage("Error");
+            response.setContent(null);
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        return new ResponseEntity<ResponseDTO>(response, status);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ResponseDTO> getExercise( @PathVariable Integer id ) {
+        ResponseDTO response = new ResponseDTO();
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
+        try {
+
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return new ResponseEntity<ResponseDTO>( response, status );
+    }
+
+    @GetMapping()
 
     @PostMapping(value = "/add")
     public ResponseEntity<ResponseDTO> addExercise(@RequestBody ExerciseDTO exerciseDTO) {
@@ -54,9 +141,9 @@ public class ExerciseController {
     }
 
     @GetMapping(value = "/get")
-    public ResponseEntity<ResponseDTO> getExercise(@RequestBody PageElement pageElement) {
+    public ResponseEntity<ResponseDTO> getExercise(@RequestParam(name = "page") Integer page, @RequestParam(name = "noOfElements") Integer noOfElements) {
         try {
-            List<ExerciseGetDTO> exerciseGetDTOList = exerciseService.getExercise(pageElement.getPage(), pageElement.getNoOfElements());
+            List<ExerciseGetDTO> exerciseGetDTOList = exerciseService.getExercise(page, noOfElements);
             responseDTO.setCode(VarList.RSP_SUCCESS);
             responseDTO.setMessage("success");
             responseDTO.setContent(exerciseGetDTOList);

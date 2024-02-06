@@ -30,6 +30,8 @@ public class ExerciseService {
     @Autowired
     private ExerciseUserReviewRepository exerciseUserReviewRepository;
 
+
+
     public String addExercise(ExerciseDTO exerciseDTO) {
         if (exerciseRepository.existsByName(exerciseDTO.getName())){
             return VarList.RSP_DUPLICATED;
@@ -40,8 +42,21 @@ public class ExerciseService {
         }
     }
     public List<ExerciseGetDTO> getExercise(int pageNo,int noOfElements){
+        System.out.println(noOfElements);
         List<Exercise> exerciseList=exerciseRepository.findAll(PageRequest.of(pageNo,noOfElements)).toList();
-        return modelMapper.map(exerciseList,new TypeToken<ArrayList<ExerciseGetDTO>>(){}.getType());
+        System.out.println(exerciseList);
+        List<ExerciseGetDTO> results = new ArrayList<>();
+
+        for (var exercise :
+                exerciseList) {
+            ExerciseGetDTO e = new ExerciseGetDTO();
+            e.setDescription(exercise.getDescription());
+            e.setId(exercise.getId());
+            e.setName(exercise.getName());
+            e.setGifURL(exercise.getGifURL());
+            results.add(e);
+        }
+        return results;
     }
     public long getExerciseCount(){
         return exerciseRepository.count();

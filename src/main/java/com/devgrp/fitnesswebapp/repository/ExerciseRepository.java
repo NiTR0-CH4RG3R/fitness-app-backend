@@ -9,6 +9,5 @@ import java.util.Optional;
 @Repository
 public interface ExerciseRepository extends JpaRepository<Exercise, Integer> {
     boolean existsByName(String name);
-
     Optional<Exercise> findByName(String name);
 }

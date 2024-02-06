@@ -13,7 +13,10 @@ public class ExerciseGetDTO {
     private Integer id;
 
     public void setDescription(String description) {
-        this.description = description.substring(0,100);//[TODO]:find a best way than this
+        if ( description.length() > 100 )
+            this.description = description.substring(0,100);
+        else
+            this.description = description;
     }
 
     @Setter
