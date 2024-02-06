@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootApplication
-public class FitnessWebAppApplication /*implements CommandLineRunner*/ {
+public class FitnessWebAppApplication implements CommandLineRunner {
 
 	public static void main(String[] args) {
 		SpringApplication.run(FitnessWebAppApplication.class, args);
@@ -49,31 +49,29 @@ public class FitnessWebAppApplication /*implements CommandLineRunner*/ {
 //
 //	@Autowired WorkoutPlanRepository workoutPlanRepository;
 //
-//	@Autowired UserRepository userRepository;
-//
-//	@Override
-//	public void run(String... args) throws Exception {
-//		User user = new User();
-//		user.setFirstName( "Buddhima" );
-//		user.setLastName( "Zoysa" );
-//		user.setType( UserType.USER );
-//		user.setEmail("buddhimakaveeshwara@gmail.com");
-//		user.setPassword("ABCD");
-//		user.setDob(LocalDate.now());
-//		user.setAddress("Homeless");
-//		user.setTelephoneNo("No Contact");
-//		user.setEmergencyContact("NONO");
-//
-//		var goals = new ArrayList<Goal>();
-//		var goal = new Goal();
-//		goal.setType(GoalType.WEIGHT_LOSS);
-//		goal.setAchievementValue(8);
-//		goal.setFollowedBy(user);
-//		goals.add(goal);
-//
-//		user.setGoals(goals);
-//
-//		userRepository.save(user);
-//
-//	}
+	@Autowired UserRepository userRepository;
+
+	@Override
+	public void run(String... args) throws Exception {
+		String email = "test@user.com";
+		String password = "testuserpwd";
+
+		var user = new User();
+		user.setId( 1 );
+		user.setFirstName("Test");
+		user.setLastName("User");
+		user.setType(UserType.ADMIN);
+		user.setEmail(email);
+		user.setPassword(password);
+		user.setDob(LocalDate.now());
+		user.setAddress("Test Address");
+		user.setTelephoneNo("No Tele");
+		user.setWeight(100.0f);
+		user.setBloodGroup("A+");
+		user.setHealthIssues("No Issues");
+		user.setEmergencyContact("NO");
+
+		userRepository.save(user);
+
+	}
 }
