@@ -10,6 +10,7 @@ import com.devgrp.fitnesswebapp.repository.NotificationRepository;
 import com.devgrp.fitnesswebapp.repository.UserRepository;
 import com.devgrp.fitnesswebapp.repository.WorkoutPlanRepository;
 import com.devgrp.fitnesswebapp.util.VarList;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -133,40 +134,28 @@ public class UserService {
         }
         return null;
     }
-    public String updateGoal(int userId, GoalType goalType,GoalDTO goalDTO){
-        User user = userRepository.findById(userId).orElse(null);
-        if (user == null) return VarList.RSP_NO_DATA_FOUND;
-        List<Goal> goalList = user.getGoals();
-        if (goalList == null) return VarList.RSP_NO_DATA_FOUND;//[TODO]:resolve index out of bound error
-        int j=0;
-        while (goalList.get(j).getType() != goalType) {
-            j++;
+    public String updateGoal(Integer id, GoalDTO goalDTO){
+        try {
+            Goal g = modelMapper.map(goalDTO, Goal.class);
+            g.setId( id );
+            goalRepository.save(g);
         }
-        if (j < goalList.size() - 1) {
-            goalList.set(j-1, modelMapper.map(goalDTO, Goal.class));
-            user.setGoals(goalList);
-            userRepository.save(user);
-            return VarList.RSP_SUCCESS;
+        catch ( Exception e ) {
+            System.out.println(e.getMessage());
+            return e.getMessage();
         }
-        return VarList.RSP_NO_DATA_FOUND;
+        return VarList.RSP_SUCCESS;
     }
 
-    public String deleteGoal(int userId, GoalType goalType){
-        User user = userRepository.findById(userId).orElse(null);
-        if (user == null) return VarList.RSP_NO_DATA_FOUND;
-        List<Goal> goalList = user.getGoals();
-        if (goalList == null) return VarList.RSP_NO_DATA_FOUND;
-        int j = 0;
-        while (goalList.get(j).getType() != goalType){
-            j++;
+    public String deleteGoal(int userId, Integer id){
+        try {
+            goalRepository.deleteById(id);
         }
-        if(j < goalList.size()-1){
-            goalList.remove(j);
-            user.setGoals(goalList);
-            userRepository.save(user);
-            return VarList.RSP_SUCCESS;
+        catch ( Exception e ) {
+            System.out.println(e.getMessage());
+            return e.getMessage();
         }
-        return VarList.RSP_NO_DATA_FOUND;
+        return VarList.RSP_SUCCESS;
     }
 //Workout plan
 public String addWorkoutPlan(String userEmail, WorkoutPlanDTO workoutPlanDTO) {
@@ -342,60 +331,33 @@ public String followWorkoutPlan(String userEmail,int workoutPlanId){
         }
         return VarList.RSP_NO_DATA_FOUND;
     }
-    public String addDailyProgress(String userEmail,GoalDailyProgressDTO goalDailyProgressDTO ){
+    public String addDailyProgress(Integer userId, Integer id, GoalDTO data){
         try{
-            User user=userRepository.findUserByEmail(userEmail).orElse(null);
-            if (user==null) return VarList.RSP_NO_DATA_FOUND;
-            List<Goal> goalList=user.getGoals();
-            if(goalList==null) return VarList.RSP_NO_DATA_FOUND;
-            int j=0;
-            while (goalList.get(j).getId() != goalDailyProgressDTO.getGoalID()){
-                j++;
-            }
-            if(j < goalList.size()-1){
-                if(goalList.get(j).getDailyProgress()==null){
-                    ArrayList<GoalDailyProgress> goalDailyProgresses = new ArrayList<>();
-                    goalDailyProgresses.add(modelMapper.map(goalDailyProgressDTO,GoalDailyProgress.class));
-                    goalList.get(j).setDailyProgress(goalDailyProgresses);
-                    user.setGoals(goalList);
-                    userRepository.save(user);
-                    return VarList.RSP_SUCCESS;
-                }
-                else {
-                    goalList.get(j).getDailyProgress().add(modelMapper.map(goalDailyProgressDTO,GoalDailyProgress.class));
-                    user.setGoals(goalList);
-                    userRepository.save(user);
-                    return VarList.RSP_SUCCESS;
-                }
-            }
-            return VarList.RSP_NO_DATA_FOUND;
+
+
         }
         catch (Exception ex){
            return VarList.RSP_ERROR;
         }
+
+        return VarList.RSP_NO_DATA_FOUND;
     }
-    public GoalDailyProgressDTO getGoalDailyProgress(String userEmail, int goalId, GoalDailyProgressKey goalDailyProgressKey){
-        User user=userRepository.findUserByEmail(userEmail).orElse(null);
-        if (user==null) return null;
-        List<Goal> goalList=user.getGoals();
-        if(goalList==null) return null;
-        int j=0;
-        while (goalList.get(j).getId() != goalId){
-            j++;
-        }
-        List<GoalDailyProgress> goalDailyProgressList=goalList.get(j).getDailyProgress();
-        if(j < goalList.size()-1) {
-            if (goalList.get(j).getDailyProgress() == null) ;
-            return null;
-        }
-        else{
-            int k=0;
-            while (goalDailyProgressList.get(k).getId() != goalDailyProgressKey){
-                k++;
+    public List<GoalDailyProgressDTO> getGoalDailyProgress( int goalId){
+        try {
+            var goal = goalRepository.findById(goalId).orElse(null);
+            var progresses = goal.getDailyProgress();
+            var progressDTOs = new ArrayList<GoalDailyProgressDTO>();
+
+            for ( var progress : progresses ) {
+                progressDTOs.add(modelMapper.map(progress, GoalDailyProgressDTO.class));
             }
-            return modelMapper.map(goalDailyProgressList.get(k),new TypeToken<ArrayList<GoalDailyProgressDTO>>() {
-            }.getType());
+
+            return progressDTOs;
         }
+        catch ( Exception e ) {
+            System.out.println(e.getMessage());
+        }
+        return null;
     }
 
     public String deleteGoalDailyProgress(String userEmail, int goalId, GoalDailyProgressKey goalDailyProgressKey){

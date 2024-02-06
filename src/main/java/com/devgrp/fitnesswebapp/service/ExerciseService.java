@@ -8,6 +8,9 @@ import com.devgrp.fitnesswebapp.entity.compositekeys.ExerciseUserReviewKey;
 import com.devgrp.fitnesswebapp.repository.*;
 import com.devgrp.fitnesswebapp.util.VarList;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import org.aspectj.weaver.ast.Var;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +21,8 @@ import java.util.List;
 
 @Service
 @Transactional
+@AllArgsConstructor
+@NoArgsConstructor
 public class ExerciseService {
     @Autowired
     private ExerciseRepository exerciseRepository;
@@ -25,8 +30,6 @@ public class ExerciseService {
     private ModelMapper modelMapper;
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private WorkoutPlanRepository workoutPlanRepository;
     @Autowired
     private ExerciseUserReviewRepository exerciseUserReviewRepository;
 
@@ -61,19 +64,26 @@ public class ExerciseService {
     public long getExerciseCount(){
         return exerciseRepository.count();
     }
-    public String updateExercise(ExerciseGetDTO exerciseGetDTO){
-        if(exerciseRepository.existsByName(exerciseGetDTO.getName())){
-            exerciseRepository.save(modelMapper.map(exerciseGetDTO,Exercise.class));
+    public String updateExercise(Integer id, ExerciseDTO data){
+        try {
+            Exercise e = modelMapper.map(data, Exercise.class);
+            e.setId(id);
+            exerciseRepository.save(e);
             return VarList.RSP_SUCCESS;
         }
-        else{
-            return VarList.RSP_NO_DATA_FOUND;
+        catch ( Exception e ) {
+            System.out.println(e.getMessage());
+            return VarList.RSP_ERROR;
         }
     }
-    public String deleteExercise(String exerciseName){
-        Exercise exercise=exerciseRepository.findByName(exerciseName).orElse(null);
-        if(exercise==null) return VarList.RSP_NO_DATA_FOUND;
-        exerciseRepository.delete(exercise);
+    public String deleteExercise(Integer id){
+        try {
+            exerciseRepository.deleteById(id);
+        }
+        catch (Exception e ) {
+            System.out.println(e.getMessage());
+            return VarList.RSP_ERROR;
+        }
         return VarList.RSP_SUCCESS;
     }
     public ExerciseGetDTO searchExercise(String exerciseName){
@@ -103,12 +113,24 @@ public class ExerciseService {
             return VarList.RSP_ERROR;
         }
     }
-    public List<UserReviewGetDTO> getExerciseUserReview(){
+    public List<UserReviewDTO> getExerciseUserReview( Integer exerciseId ){
         try{
-            List<ExerciseUserReview> exerciseUserReviewList=exerciseUserReviewRepository.findAll();
-            return modelMapper.map(exerciseUserReviewList,new TypeToken<ArrayList<UserReviewDTO>>(){}.getType());
+            var exericse = exerciseRepository.findById(exerciseId).orElse(null);
+            var reviews = exericse.getUserReviews();
+            ArrayList<UserReviewDTO> result = new ArrayList<>();
+            for (var review :
+                    reviews) {
+                var r = new UserReviewDTO();
+                r.setEntityId(review.getId().getUserId());
+                r.setRating(review.getRating());
+                r.setComment(review.getComment());
+                result.add(r);
+            }
+
+            return result;
         }
         catch (Exception ex){
+            System.out.println(ex.getMessage());
             return null;
         }
     }

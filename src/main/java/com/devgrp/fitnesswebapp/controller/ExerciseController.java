@@ -22,20 +22,8 @@ import java.util.List;
 @RequestMapping(value = "ap1/v1/exercise")
 public class ExerciseController {
 
+    @Autowired
     private final ExerciseService exerciseService;
-
-    private final ResponseDTO responseDTO;
-
-//    public ResponseEntity<ResponseDTO> functionName() {
-//        ResponseDTO response = new ResponseDTO();
-//        HttpStatus status = HttpStatus.UNAUTHORIZED;
-//        try {
-//        }
-//        catch (Exception e) {
-//            System.out.println(e.getMessage());
-//        }
-//        return new ResponseEntity<ResponseDTO>( response, status );
-//    }
 
     @GetMapping( value = "/all" )
     public ResponseEntity<ResponseDTO> getExercises() {
@@ -97,7 +85,7 @@ public class ExerciseController {
         return new ResponseEntity<ResponseDTO>(response, status);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(value = "/{id}")
     public ResponseEntity<ResponseDTO> getExercise( @PathVariable Integer id ) {
         ResponseDTO response = new ResponseDTO();
         HttpStatus status = HttpStatus.UNAUTHORIZED;
@@ -106,216 +94,111 @@ public class ExerciseController {
         }
         catch (Exception e) {
             System.out.println(e.getMessage());
+            response.setCode(VarList.RSP_ERROR);
+            response.setMessage(e.getMessage());
+            response.setContent(null);
         }
         return new ResponseEntity<ResponseDTO>( response, status );
     }
 
-    @GetMapping()
-
-    @PostMapping(value = "/add")
-    public ResponseEntity<ResponseDTO> addExercise(@RequestBody ExerciseDTO exerciseDTO) {
+    @GetMapping(value = "/name/{name}" )
+    public ResponseEntity<ResponseDTO> getExerciseByName( @PathVariable String name ) {
+        ResponseDTO response = new ResponseDTO();
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
         try {
-            String res = exerciseService.addExercise(exerciseDTO);
-            if (res.equals("00")) {
-                responseDTO.setCode(VarList.RSP_SUCCESS);
-                responseDTO.setMessage("Success");
-                responseDTO.setContent(exerciseDTO);
-                return new ResponseEntity<>(responseDTO, HttpStatus.ACCEPTED);
-            } else if (res.equals("06")) {
-                responseDTO.setCode(VarList.RSP_DUPLICATED);
-                responseDTO.setMessage("Allready added");
-                responseDTO.setContent(null);
-                return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
-            } else {
-                responseDTO.setCode(VarList.RSP_ERROR);
-                responseDTO.setMessage("Error");
-                responseDTO.setContent(null);
-                return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
-            }
-        } catch (Exception ex) {
-            responseDTO.setCode(VarList.RSP_ERROR);
-            responseDTO.setMessage(ex.getMessage());
-            responseDTO.setContent(null);
-            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+            var result = exerciseService.searchExercise( name );
+            response.setContent(result);
+            response.setMessage("Successful");
+            response.setCode(VarList.RSP_SUCCESS);
+            status = HttpStatus.OK;
         }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+            response.setCode(VarList.RSP_ERROR);
+            response.setMessage(e.getMessage());
+            response.setContent(null);
+        }
+        return new ResponseEntity<ResponseDTO>( response, status );
     }
 
-    @GetMapping(value = "/get")
-    public ResponseEntity<ResponseDTO> getExercise(@RequestParam(name = "page") Integer page, @RequestParam(name = "noOfElements") Integer noOfElements) {
+    @PostMapping()
+    public ResponseEntity<ResponseDTO> createExercise(@RequestBody ExerciseDTO data, @RequestParam Integer userId) {
+        ResponseDTO response = new ResponseDTO();
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
         try {
-            List<ExerciseGetDTO> exerciseGetDTOList = exerciseService.getExercise(page, noOfElements);
-            responseDTO.setCode(VarList.RSP_SUCCESS);
-            responseDTO.setMessage("success");
-            responseDTO.setContent(exerciseGetDTOList);
-            return new ResponseEntity<>(responseDTO, HttpStatus.ACCEPTED);
-        } catch (Exception ex) {
-            responseDTO.setCode(VarList.RSP_ERROR);
-            responseDTO.setMessage(ex.getMessage());
-            responseDTO.setContent(null);
-            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+            var result = exerciseService.addExercise( data );
+            response.setContent(result);
+            response.setMessage("Successful");
+            response.setCode(VarList.RSP_SUCCESS);
+            status = HttpStatus.OK;
         }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+            response.setCode(VarList.RSP_ERROR);
+            response.setMessage(e.getMessage());
+            response.setContent(null);
+        }
+        return new ResponseEntity<ResponseDTO>( response, status );
     }
 
-    @GetMapping(value = "/getCount")
-    public ResponseEntity<ResponseDTO> getCount() {
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<ResponseDTO> updateExercise(@PathVariable Integer id, @RequestBody ExerciseDTO data, @RequestParam Integer userId) {
+        ResponseDTO response = new ResponseDTO();
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
         try {
-            long count = exerciseService.getExerciseCount();
-            responseDTO.setCode(VarList.RSP_SUCCESS);
-            responseDTO.setMessage("success");
-            responseDTO.setContent(count);
-            return new ResponseEntity<>(responseDTO, HttpStatus.ACCEPTED);
-        } catch (Exception ex) {
-            responseDTO.setCode(VarList.RSP_ERROR);
-            responseDTO.setMessage(ex.getMessage());
-            responseDTO.setContent(null);
-            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+            var result = exerciseService.updateExercise( id, data );
+            response.setContent(result);
+            response.setMessage("Successful");
+            response.setCode(VarList.RSP_SUCCESS);
+            status = HttpStatus.OK;
         }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+            response.setCode(VarList.RSP_ERROR);
+            response.setMessage(e.getMessage());
+            response.setContent(null);
+        }
+        return new ResponseEntity<ResponseDTO>( response, status );
     }
 
-    @PutMapping(value = "/update")
-    public ResponseEntity<ResponseDTO> updateExercise(@RequestBody ExerciseGetDTO exerciseGetDTO) {
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<ResponseDTO> deleteExercise(@PathVariable Integer id, @RequestParam Integer userId) {
+        ResponseDTO response = new ResponseDTO();
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
         try {
-            String res = exerciseService.updateExercise(exerciseGetDTO);
-            if (res.equals("00")) {
-                responseDTO.setCode(VarList.RSP_SUCCESS);
-                responseDTO.setMessage("Success");
-                responseDTO.setContent(exerciseGetDTO);
-                return new ResponseEntity<>(responseDTO, HttpStatus.ACCEPTED);
-            } else if (res.equals("01")) {
-                responseDTO.setCode(VarList.RSP_NO_DATA_FOUND);
-                responseDTO.setMessage("Data not found");
-                responseDTO.setContent(null);
-                return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
-            } else {
-                responseDTO.setCode(VarList.RSP_ERROR);
-                responseDTO.setMessage("Error");
-                responseDTO.setContent(null);
-                return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
-            }
-        } catch (Exception ex) {
-            responseDTO.setCode(VarList.RSP_ERROR);
-            responseDTO.setMessage(ex.getMessage());
-            responseDTO.setContent(null);
-            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+            var result = exerciseService.deleteExercise( id );
+            response.setContent(result);
+            response.setMessage("Successful");
+            response.setCode(VarList.RSP_SUCCESS);
+            status = HttpStatus.OK;
         }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+            response.setCode(VarList.RSP_ERROR);
+            response.setMessage(e.getMessage());
+            response.setContent(null);
+        }
+        return new ResponseEntity<ResponseDTO>( response, status );
     }
 
-    @GetMapping(value = "/search/{exerciseName}")
-    public ResponseEntity<ResponseDTO> searchExercise(@PathVariable String exerciseName) {
+    @GetMapping(value = "/{id}/reviews")
+    public ResponseEntity<ResponseDTO> getExerciseReviews(@PathVariable Integer id) {
+        ResponseDTO response = new ResponseDTO();
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
         try {
-            ExerciseGetDTO exerciseGetDTO = exerciseService.searchExercise(exerciseName);
-            if (exerciseGetDTO != null) {
-                responseDTO.setCode(VarList.RSP_SUCCESS);
-                responseDTO.setMessage("Success");
-                responseDTO.setContent(exerciseGetDTO);
-                return new ResponseEntity<>(responseDTO, HttpStatus.ACCEPTED);
-            } else {
-                responseDTO.setCode(VarList.RSP_NO_DATA_FOUND);
-                responseDTO.setMessage("Exercise not found");
-                responseDTO.setContent(null);
-                return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
-            }
-        } catch (Exception ex) {
-            responseDTO.setCode(VarList.RSP_ERROR);
-            responseDTO.setMessage(ex.getMessage());
-            responseDTO.setContent(null);
-            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+            var result = exerciseService.getExerciseUserReview( id );
+            response.setContent(result);
+            response.setMessage("Successful");
+            response.setCode(VarList.RSP_SUCCESS);
+            status = HttpStatus.OK;
         }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+            response.setCode(VarList.RSP_ERROR);
+            response.setMessage(e.getMessage());
+            response.setContent(null);
+        }
+        return new ResponseEntity<ResponseDTO>( response, status );
     }
 
-    @DeleteMapping(value = "/delete/{exerciseName}")
-    public ResponseEntity<ResponseDTO> deleteExercise(@PathVariable String exerciseName) {
-        try {
-            String res = exerciseService.deleteExercise(exerciseName);
-            if (res.equals("00")) {
-                responseDTO.setCode(VarList.RSP_SUCCESS);
-                responseDTO.setMessage("Success");
-                responseDTO.setContent(null);
-                return new ResponseEntity<>(responseDTO, HttpStatus.ACCEPTED);
-            } else if (res.equals("01")) {
-                responseDTO.setCode(VarList.RSP_NO_DATA_FOUND);
-                responseDTO.setMessage("Data not found");
-                responseDTO.setContent(null);
-                return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
-            } else {
-                responseDTO.setCode(VarList.RSP_ERROR);
-                responseDTO.setMessage("Error");
-                responseDTO.setContent(null);
-                return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
-            }
-        } catch (Exception ex) {
-            responseDTO.setCode(VarList.RSP_ERROR);
-            responseDTO.setMessage(ex.getMessage());
-            responseDTO.setContent(null);
-            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    //userReview
-    @PostMapping(value = "/addExerciseReview")
-    public ResponseEntity<ResponseDTO> addExerciseReview(@RequestBody EmailReview emailReview) {
-        try {
-            String res = exerciseService.addExerciseReview(emailReview.getUserEmail(),emailReview.getUserReviewDTO());
-            if (res.equals("00")) {
-                responseDTO.setCode(VarList.RSP_SUCCESS);
-                responseDTO.setMessage("Success");
-                responseDTO.setContent(emailReview.getUserReviewDTO());
-                return new ResponseEntity<>(responseDTO, HttpStatus.ACCEPTED);
-            }
-            else {
-                responseDTO.setCode(VarList.RSP_ERROR);
-                responseDTO.setMessage("Error");
-                responseDTO.setContent(null);
-                return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
-            }
-        } catch (Exception ex) {
-            responseDTO.setCode(VarList.RSP_ERROR);
-            responseDTO.setMessage(ex.getMessage());
-            responseDTO.setContent(null);
-            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-    @GetMapping(value = "/getExerciseReview")
-    public ResponseEntity<ResponseDTO> getExerciseUserReview() {
-        try {
-            List<UserReviewGetDTO> userReviewGetDTOList = exerciseService.getExerciseUserReview();
-            responseDTO.setCode(VarList.RSP_SUCCESS);
-            responseDTO.setMessage("success");
-            responseDTO.setContent(userReviewGetDTOList);
-            return new ResponseEntity<>(responseDTO, HttpStatus.ACCEPTED);
-        } catch (Exception ex) {
-            responseDTO.setCode(VarList.RSP_ERROR);
-            responseDTO.setMessage(ex.getMessage());
-            responseDTO.setContent(null);
-            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @DeleteMapping(value = "/deleteExerciseUserReview/{exerciseUserReviewKey}")
-    public ResponseEntity<ResponseDTO> deleteExerciseUserReview(@PathVariable ExerciseUserReviewKey exerciseUserReviewKey) {
-        try {
-            String res = exerciseService.deleteExerciseReview(exerciseUserReviewKey);
-            if (res.equals("00")) {
-                responseDTO.setCode(VarList.RSP_SUCCESS);
-                responseDTO.setMessage("Success");
-                responseDTO.setContent(null);
-                return new ResponseEntity<>(responseDTO, HttpStatus.ACCEPTED);
-            } else if (res.equals("01")) {
-                responseDTO.setCode(VarList.RSP_NO_DATA_FOUND);
-                responseDTO.setMessage("Data not found");
-                responseDTO.setContent(null);
-                return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
-            } else {
-                responseDTO.setCode(VarList.RSP_ERROR);
-                responseDTO.setMessage("Error");
-                responseDTO.setContent(null);
-                return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
-            }
-        } catch (Exception ex) {
-            responseDTO.setCode(VarList.RSP_ERROR);
-            responseDTO.setMessage(ex.getMessage());
-            responseDTO.setContent(null);
-            return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 }

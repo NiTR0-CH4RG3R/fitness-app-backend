@@ -23,7 +23,7 @@ public class WorkoutPlanController {
     private WorkoutPlanService workoutPlanService;
     @Autowired
     private ResponseDTO responseDTO;
-    @GetMapping(value = "get")
+    @GetMapping()
     public ResponseEntity<ResponseDTO> getPublicWorkoutPlan(){
         try {
             List<WorkoutPlanGetDTO> workoutPlanGetDTOList = workoutPlanService.getPublicWorkoutPlans();
@@ -38,6 +38,7 @@ public class WorkoutPlanController {
             return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     @PostMapping(value = "/addWorkoutPlanReview")
     public ResponseEntity<ResponseDTO> addWorkoutPlanReview(@RequestBody EmailReview emailReview) {
         try {

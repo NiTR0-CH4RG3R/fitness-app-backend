@@ -3,6 +3,7 @@ package com.devgrp.fitnesswebapp.controller;
 import com.devgrp.fitnesswebapp.dto.AuthenticationAcceptedDTO;
 import com.devgrp.fitnesswebapp.dto.AuthenticationDTO;
 import com.devgrp.fitnesswebapp.dto.ResponseDTO;
+import com.devgrp.fitnesswebapp.dto.UserDTO;
 import com.devgrp.fitnesswebapp.service.AuthenticationService;
 import com.devgrp.fitnesswebapp.util.VarList;
 import lombok.AllArgsConstructor;
@@ -27,6 +28,34 @@ public class AuthController {
 
         try {
             AuthenticationAcceptedDTO acceptedDTO = service.authenticate(dto).orElse(null);
+            if (acceptedDTO == null) {
+                result.setCode(VarList.RSP_NOT_AUTHRORIZED);
+                result.setMessage("Something went wrong!");
+                result.setContent(null);
+            }
+            else {
+                result.setCode(VarList.RSP_SUCCESS);
+                result.setMessage("Successful!");
+                result.setContent(acceptedDTO);
+                status = HttpStatus.ACCEPTED;
+            }
+        } catch (Exception ex) {
+            result.setCode(VarList.RSP_ERROR);
+            result.setMessage(ex.getMessage());
+            result.setContent(null);
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        return new ResponseEntity<ResponseDTO>(result, status);
+    }
+
+    @PostMapping(value = "/register")
+    public ResponseEntity<ResponseDTO> register(@RequestBody UserDTO data) {
+        ResponseDTO result = new ResponseDTO();
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        try {
+            AuthenticationAcceptedDTO acceptedDTO = service.register(data).orElse(null);
             if (acceptedDTO == null) {
                 result.setCode(VarList.RSP_NOT_AUTHRORIZED);
                 result.setMessage("Something went wrong!");

@@ -25,7 +25,6 @@ public class UserDTO {
     private String bloodGroup;
     private String healthIssues;
     private String emergencyContact;
-    private WorkoutPlan followingWorkoutPlan;
     private boolean goalNotification ;
     private boolean workoutPlanNotification;
     private boolean otherNotification;
